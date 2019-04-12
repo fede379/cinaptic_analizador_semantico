@@ -20,9 +20,9 @@ class Entidad(StructuredNode):
     broader = RelationshipTo('Entidad', 'BROADER', model=BroaderRel)
     is_broader_of = RelationshipTo('Entidad', 'IS_BROADER_OF', model=isBroaderRel)
 
-from dbpediaClient import DBPediaClient
+from dbpediaClient import* 
 client = DBPediaClient()
-relations = client.gen_graph_for_neo("Machine_learning",5)
+client.gen_graph_for_neo("Machine_learning",4)
 for r in relations:
     print r
     try:
@@ -56,3 +56,4 @@ for r in relations:
 #harry_potter = Book(title='Harry potter and the..').save()
 #rowling =  Author(name='J. K. Rowling').save()
 #harry_potter.author.connect(rowling)
+
