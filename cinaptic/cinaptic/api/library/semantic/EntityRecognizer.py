@@ -75,10 +75,9 @@ class EntityRecognizer:
         """
         entities = []
         for i, entity in enumerate(tr_entities.entities()):
-            print(entity.relevance_score)
-            if entity.relevance_score >= umbral:
-                self.parse_entity(entity)
-                entities.append(self.parse_entity(entity))
+            #if entity.relevance_score >= umbral:
+            self.parse_entity(entity)
+            entities.append(self.parse_entity(entity))
 
         return entities
 

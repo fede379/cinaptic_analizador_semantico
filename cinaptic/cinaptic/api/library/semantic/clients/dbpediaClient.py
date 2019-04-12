@@ -124,9 +124,6 @@ class DBPediaClient:
         for r in mixed_relations:
             relations.append(r)
 
-<<<<<<< HEAD
-        #print (relations)
-=======
         relations = set(relations)
         #se eliminan los duplicados mediante el uso del conjunto
         relations = list(relations)
@@ -135,7 +132,6 @@ class DBPediaClient:
             how_many_relations = how_many_relations + 1
             print(r)
         print ("cantidad de relaciones: "+str(how_many_relations))
->>>>>>> 6480057db7147ea0c77ae7085809394b402266f1
         return relations
 
 def get_dct_subject_relations(entity,niveles):

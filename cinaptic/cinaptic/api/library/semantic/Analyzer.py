@@ -1,4 +1,5 @@
-
+from repository.Neo4J import *
+from neomodel import db
 class Analyser:
 
     def analyse(self, keys_enities, url_entities):
@@ -16,9 +17,8 @@ class Analyser:
                     for i, ke in enumerate(keys_enities):
                         values.append({
                             "id": ke.get("entity"),
-                            "value": self.exist_entity_in_graph(ke.get("graph"), ue.get("entity"), ke.get("entity"))
+                            "value": self.exist_entity_in_graph(ue.get("entity"), ke.get("entity"))
                         })
-                    print(ue.get("relevance"))
                     m = {
                         "entidad":ue.get("entity"),
                         "relevance":ue.get("relevance")
@@ -41,11 +41,23 @@ class Analyser:
 
         return result
 
-    def exist_entity_in_graph(self, graph, entidad, key_entity):
+    def exist_entity_in_graph(self, entidad, key_entity):
         if(entidad == key_entity):
             return 0
-        levels = [item["level"] for item in graph.get("links") if item["target"] == entidad]
-        if(len(levels) > 0):
-            return min(levels, key=float)
-        else:
+        e1 = Entidad.nodes.get_or_none(name=key_entity)
+        e2 = Entidad.nodes.get_or_none(name=entidad)
+        if(e1 is None or e2 is None):
+            print("e1 or e2 does not exists")
             return -1
+        try:
+            query = """
+                    MATCH   (e1:Entidad {{ name: "{e_one}" }}), 
+                        (e2:Entidad {{ name: "{e_two}" }}),
+                        p = shortestPath((e1)-[*..15]-(e2))
+                RETURN length(p) + 1
+                """.format(e_one=key_entity,e_two=entidad)
+            results, _ = db.cypher_query(query)
+            return results[0][0]
+        except:
+            return -2
+            

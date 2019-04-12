@@ -22,11 +22,11 @@ class Entidad(StructuredNode):
 
 from dbpediaClient import* 
 client = DBPediaClient()
-client.gen_graph_for_neo("Machine_learning",4)
+relations = client.gen_graph_for_neo("Pesticide_residue",5)
 for r in relations:
     print r
     try:
-        if r[1] == 'subject':
+        
             e1 = Entidad.nodes.get_or_none(name=r[0])
             if e1 is None:
                 e1 = Entidad(name=r[0])
@@ -35,10 +35,17 @@ for r in relations:
             if e2 is None:
                 e2 = Entidad(name=r[2])
                 e2.save()
-            rel = e1.subject.relationship(e2)
-            if rel is None:
-                m = e2.subject.connect(e1)
-                m.save()
+            if r[1] == 'subject':
+                rel = e1.subject.relationship(e2)
+                if rel is None:
+                    m = e2.subject.connect(e1)
+                    m.save()
+            if r[1] == 'broader':
+                rel = e1.broader.relationship(e2)
+                if rel is None:
+                    m = e2.broader.connect(e1)
+                    m.save()
+
     except Exception, e:
         print e
         pass

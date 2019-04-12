@@ -1,6 +1,6 @@
 from Generator import GraphGenerator
 from graphs.graph import find_path
-from repository.Neo4J import Neo4J
+
 #from logging import Logger
 #from repoze.lru import lru_cache
 
