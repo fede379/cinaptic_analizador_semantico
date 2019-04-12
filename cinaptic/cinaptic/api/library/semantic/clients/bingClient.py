@@ -13,7 +13,7 @@ class BingClient:
         url = []
         reload(sys)
         sys.setdefaultencoding(GOOGLE_API_ENCODING)
-        engine_google = Bing(license=BING_API_KEY, language=BING_API_LANG)
+        engine_google = Bing(license=None, throttle=0.5, language=None)
         for i in range(1, (n + 1)):
             for result in engine_google.search(q, start=i, count=10, type=SEARCH, cached=False):
                 url.append(result.url)

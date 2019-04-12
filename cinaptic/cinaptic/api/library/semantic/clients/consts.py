@@ -26,10 +26,10 @@ IS_BROADER_OF = "is_broader_of"
 VALUE = "value"
 IS_OF_RELATIONS = "is_of_relations"
 ARISTS_VALUE = {
-    SUBJECT: 1,
-    BROADER: -1,
-    IS_BROADER_OF: 1,
-    IS_OF_RELATIONS :2
+    SUBJECT: 'subject',
+    BROADER: 'broader',
+    IS_BROADER_OF: 'is_broader_of',
+    IS_OF_RELATIONS :'is_subject_of'
 }
 NAME = "name"
 RELATION = "relation"

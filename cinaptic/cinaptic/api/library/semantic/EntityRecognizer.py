@@ -46,6 +46,7 @@ class EntityRecognizer:
         try:
             text_razor_client = TextRazorClient()
             text_razor_entities = text_razor_client.get_entities_from_text(text=text)
+            
             entities_recognized = self.recognize(tr_entities=text_razor_entities, umbral=umbral)
             return self.order_entities_by_relevance(entities_recognized, limit=limit)
         except Exception, e:
@@ -74,7 +75,8 @@ class EntityRecognizer:
         """
         entities = []
         for i, entity in enumerate(tr_entities.entities()):
-            if entity.relevance_score > umbral:
+            print(entity.relevance_score)
+            if entity.relevance_score >= umbral:
                 self.parse_entity(entity)
                 entities.append(self.parse_entity(entity))
 

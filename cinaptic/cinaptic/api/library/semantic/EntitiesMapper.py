@@ -1,7 +1,8 @@
 from Generator import GraphGenerator
 from graphs.graph import find_path
+from repository.Neo4J import Neo4J
 #from logging import Logger
-from repoze.lru import lru_cache
+#from repoze.lru import lru_cache
 
 class EntityMapper:
 
@@ -13,9 +14,11 @@ class EntityMapper:
         for i, key in enumerate(keys):
         #    Logger.debug("Normalizando Claves de Busqueda: {0}".format(key["entity"]))
             key_graph = graph_generator.build(key["entity"], levels=levels)
+            neo4J = Neo4J()
+            neo4J.save(key_graph)
             keys_entities.append({
                 "entity": key["entity"],
-                "graph": self.get_graph(key_graph),
+                "graph": key_graph,
                 "relevance": key["relevance"],
                 "wiki": key["wiki"],
                 "name": key["long_name"]

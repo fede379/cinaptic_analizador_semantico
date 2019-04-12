@@ -2,7 +2,6 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from consts import DBPEDIA_SPARKQL_ENDPOINT, \
     RESULTS, BINDINGS, VALUE, ARISTS_VALUE, NAME, \
     RELATION, SLASH_RESOURCE, TWO_POINTS
-from repoze.lru import lru_cache
 
 class DBPediaClient:
 
@@ -123,7 +122,7 @@ class DBPediaClient:
             relations.append(r)
         relations = set(relations)
 
-        print (relations)
+        #print (relations)
         return relations
 
 def get_dct_subject_relations(entity,niveles):

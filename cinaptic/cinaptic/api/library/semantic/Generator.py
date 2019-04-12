@@ -13,10 +13,7 @@ class GraphGenerator:
         already_expanded = []
         entities = []
         if(entity is not None):
-            entities.append({'relation': 0, 'name': entity, "level":0})
-            for i in range(levels):
-                grafo, entities, already_expanded = self.get_graph_level(grafo, entities, already_expanded, i)
-
+            grafo = dbpedia_client.gen_graph_for_neo(entity,levels)
         print("<<<<<< FIN >>>>>>")
         return grafo
 

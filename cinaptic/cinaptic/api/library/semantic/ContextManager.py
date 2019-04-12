@@ -15,6 +15,7 @@ class ContextManager:
     def analyse_context(self, configurations):
         print("Iniciando Procesamiento")
         keys_base_entities = self.get_keys_entities(configurations["keys"])
+        print(keys_base_entities)
         print("Entidades de las claves de Busquedas obtenidas")
         entities_mapper = EntityMapper()
         print("Mapeando Entidades")
@@ -28,11 +29,11 @@ class ContextManager:
         analyser = Analyser()
         print("Analizando entidades")
         results = analyser.analyse(keys_entities, url_base_entities)
-        configs = self.get_configs(keys_entities)
+        configs = []#self.get_configs(keys_entities)
         print(configs)
         print("creando Excell")
-        excell = ExcellGenerator()
-        excell.generate_excel(results, configs)
+        # excell = ExcellGenerator()
+        # excell.generate_excel(results, configs)
         return {
             "results":results,
             "configs": configs
@@ -146,6 +147,6 @@ class ContextManager:
         return configs
 
 
-#ctx = ContextManager()
-#ctx.analyse_context({u'keys': u'machine learning python algorithms', u'engines': [{u'engine': u'google', u'number_of_urls': 15, u'number_of_pages': 15, u'limit': 15, u'umbral': 0.6}, {u'engine': u'bing', u'number_of_urls': 15, u'number_of_pages': 2, u'limit': 15, u'umbral': 0.6}], u'max_graph_level': 3})
+ctx = ContextManager()
+ctx.analyse_context({u'keys': u'pesticide residue', u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 5})
 #ctx.analyse_context({u'keys': u'machine learning python algorithms', u'engines': [{u'engine': u'google', u'number_of_urls': 1, u'number_of_pages': 1, u'limit': 15, u'umbral': 0.6}, {u'engine': u'bing', u'number_of_urls': 1, u'number_of_pages': 1, u'limit': 15, u'umbral': 0.6}], u'max_graph_level': 1})
