@@ -413,7 +413,7 @@ def get_mixed_relations(entity, niveles):
                 entity1 = "entity"+str(1)
                 e1 =json_entity[entity1]["value"].split(":")[2]
                 relations.append((entity,"subject",e1))   
-                for i in range(1,niveles):
+                for i in range(1,niveles-1):
                     entity1 = "entity"+str(i)
                     entity2 = "entity"+str(i+1)
                     e1 =json_entity[entity1]["value"].split(":")[2]
@@ -438,7 +438,7 @@ def get_mixed_relations(entity, niveles):
                     entity1 = "entity"+str(1)
                     e1 =json_entity[entity1]["value"].split("/")[4]
                     relations.append((entity,"subject",e1))   
-                    for n in range(1,niveles):
+                    for n in range(1,niveles-1):
                         for i in range(1,n+1):
                             entity1 = "entity"+str(i)
                             entity2 = "entity"+str(i+1)
@@ -464,7 +464,7 @@ def get_mixed_relations(entity, niveles):
             for json_entity in results["results"]["bindings"]:
                 #http://dbpedia.org/resource/Learning
                 
-                for i in range(1,niveles):
+                for i in range(1,niveles-1):
                     entity1 = "entity"+str(i)
                     entity2 = "entity"+str(i+1)
                     e1 =json_entity[entity1]["value"].split("/")[4]
@@ -489,14 +489,14 @@ def get_mixed_relations(entity, niveles):
             if len(results["results"]["bindings"])>0:
                 for json_entity in results["results"]["bindings"]:
                     #http://dbpedia.org/resource/Learning
-                    for n in range(1,niveles):
+                    for n in range(1,niveles-1):
                         for i in range(1,n+1):
                             entity1 = "entity"+str(i)
                             entity2 = "entity"+str(i+1)
                             e1 =json_entity[entity1]["value"].split("/")[4]
                             e2 =json_entity[entity2]["value"].split("/")[4]
                         relations.append((e1,"subject",e2))
-                        for i in range(n,niveles):
+                        for i in range(n,niveles-1):
                             entity1 = "entity"+str(i)
                             entity2 = "entity"+str(i+1)
                             e1 =json_entity[entity1]["value"].split(":")[2]
