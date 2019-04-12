@@ -493,14 +493,14 @@ def get_mixed_relations(entity, niveles):
                         for i in range(1,n+1):
                             entity1 = "entity"+str(i)
                             entity2 = "entity"+str(i+1)
-                            e1 =json_entity[entity1]["value"].split("/")[4]
-                            e2 =json_entity[entity2]["value"].split("/")[4]
+                            e1 =json_entity[entity1]["value"].split(":")[2]
+                            e2 =json_entity[entity2]["value"].split(":")[2]
                         relations.append((e1,"subject",e2))
                         for i in range(n,niveles-1):
                             entity1 = "entity"+str(i)
                             entity2 = "entity"+str(i+1)
-                            e1 =json_entity[entity1]["value"].split(":")[2]
-                            e2 =json_entity[entity2]["value"].split(":")[2]
+                            e1 =json_entity[entity1]["value"].split("/")[4]
+                            e2 =json_entity[entity2]["value"].split("/")[4]
                         relations.append((e1,"broader",e2))
                     entity2 = "entity"+str(niveles-1)
                     e2 =json_entity[entity2]["value"].split("/")[4]
