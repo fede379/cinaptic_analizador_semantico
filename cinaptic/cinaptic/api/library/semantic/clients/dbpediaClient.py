@@ -113,6 +113,7 @@ class DBPediaClient:
         dct_relations = get_dct_subject_relations(entity,niveles)
         dc_relations = get_dc_subject_relations(entity,niveles)
         skos_relations = get_skos_broader_relations(entity,niveles)
+        mixed_relations = get_mixed_relations(entity,niveles)
 
         relations = []
         for r in dct_relations:
@@ -121,9 +122,17 @@ class DBPediaClient:
             relations.append(r)
         for r in skos_relations:
             relations.append(r)
-        relations = set(relations)
+        for r in mixed_relations:
+            relations.append(r)
 
-        print (relations)
+        relations = set(relations)
+        #se eliminan los duplicados mediante el uso del conjunto
+        relations = list(relations)
+        how_many_relations = 0
+        for r in relations:
+            how_many_relations = how_many_relations + 1
+            print(r)
+        print ("cantidad de relaciones: "+str(how_many_relations))
         return relations
 
 def get_dct_subject_relations(entity,niveles):
@@ -131,12 +140,7 @@ def get_dct_subject_relations(entity,niveles):
     sparql = SPARQLWrapper(DBPEDIA_SPARKQL_ENDPOINT)
     #entity como category
     #las entidades devueltas son resources
-    query_dct = """
-                PREFIX  dbc:  <http://dbpedia.org/resource/Category:>
-                PREFIX  dct:  <http://purl.org/dc/terms/>
-                PREFIX  dbr:  <http://dbpedia.org/resource/>
-                
-                SELECT DISTINCT  ?entity
+    query_dct = get_prefixes() + """SELECT DISTINCT  ?entity
                 WHERE
                     {
                         ?entity dct:subject <http://dbpedia.org/resource/Category:"""+entity+"""> .
@@ -153,12 +157,7 @@ def get_dct_subject_relations(entity,niveles):
             relations.append((e,"subject",entity))
     #entity como resource
     #las entidades devueltas son categories
-    query_dct = """
-                PREFIX  dbc:  <http://dbpedia.org/resource/Category:>
-                PREFIX  dct:  <http://purl.org/dc/terms/>
-                PREFIX  dbr:  <http://dbpedia.org/resource/>
-                
-                SELECT DISTINCT  ?entity
+    query_dct = get_prefixes() + """SELECT DISTINCT  ?entity
                 WHERE
                     {
                         <http://dbpedia.org/resource/"""+entity+"""> dct:subject ?entity .
@@ -270,24 +269,8 @@ def get_skos_broader_relations(entity,niveles):
     relations = []
     sparql = SPARQLWrapper(DBPEDIA_SPARKQL_ENDPOINT)
 
-    def select_clause_generator(nivel):
-        s = ""
-        for i in range(1, nivel+1):
-            s = s + " ?entity"+str(i)
-        return s
-    def where_clause_generator(nivel):
-        s = ""
-        for i in range(1, nivel):
-            s = s + " ?entity"+str(i) + " skos:broader " + " ?entity"+str(i+1) + " .\n"
-        return s
     for nivel in range(1,niveles):
-        query_skos =    """
-                            PREFIX  dbc:  <http://dbpedia.org/resource/Category:>
-                            PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
-                            PREFIX  dbr:  <http://dbpedia.org/resource/>
-                    
-                            
-                            SELECT DISTINCT"""+select_clause_generator(nivel)+"""
+        query_skos =    get_prefixes() + select_clause_generator(nivel)+"""
                             WHERE
                                 {
                                     """+where_clause_generator(nivel)+"""
@@ -310,16 +293,10 @@ def get_skos_broader_relations(entity,niveles):
                     relations.append((e1,"subject",e2))
                 entity2 = "entity"+str(nivel)
                 e2 =json_entity[entity2]["value"].split(":")[2]
-                relations.append((e2,"subject",entity))
+                relations.append((e2,"broader",entity))
                 
     for nivel in range(1,niveles):
-        query_skos =    """
-                            PREFIX  dbc:  <http://dbpedia.org/resource/Category:>
-                            PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
-                            PREFIX  dbr:  <http://dbpedia.org/resource/>
-                    
-                            
-                            SELECT DISTINCT"""+select_clause_generator(nivel)+"""
+        query_skos =    get_prefixes() +select_clause_generator(nivel)+"""
                             WHERE
                                 {
                                     <http://dbpedia.org/resource/Category:"""+entity+"""> skos:broader ?entity"""+str(1)+""" .
@@ -341,8 +318,209 @@ def get_skos_broader_relations(entity,niveles):
                     entity2 = "entity"+str(i+1)
                     e1 =json_entity[entity1]["value"].split(":")[2]
                     e2 =json_entity[entity2]["value"].split(":")[2]
-                    relations.append((e1,"subject",e2))
+                    relations.append((e1,"broader",e2))
     return set(relations)
+
+def get_prefixes():
+    prefixes =  """
+                PREFIX  dbc:  <http://dbpedia.org/resource/Category:>
+                PREFIX  dct:  <http://purl.org/dc/terms/>
+                PREFIX  dbr:  <http://dbpedia.org/resource/>
+                PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+                """
+    return prefixes
+
+def select_clause_generator(nivel):
+    s = " SELECT DISTINCT "
+    for i in range(1, nivel+1):
+        s = s + " ?entity"+str(i)
+    return s
+def where_clause_generator(nivel):
+    s = ""
+    for i in range(1, nivel):
+        s = s + " ?entity"+str(i) + " skos:broader " + " ?entity"+str(i+1) + " .\n"
+    return s
+
+def get_mixed_relations(entity, niveles):
+    relations = []
+    sparql = SPARQLWrapper(DBPEDIA_SPARKQL_ENDPOINT)
+    #en princio mezclar relaciones tiene sentidod si tenemos al menos dos saltos, es decir, 3 niveles
+    if niveles > 2: #niveles = 3 
+    #case 01
+        query = get_prefixes()+"""SELECT DISTINCT ?entity1 ?entity2 WHERE
+        {
+            <http://dbpedia.org/resource/"""+entity+""">  dct:subject ?entity1.
+            ?entity1 skos:broader ?entity2.
+        }"""
+        sparql.setQuery(query=query)
+        sparql.setReturnFormat(JSON)
+        results = sparql.query().convert()
+        if len(results["results"]["bindings"])>0:
+            for json_entity in results["results"]["bindings"]:
+                #http://dbpedia.org/resource/Learning
+                e1 =json_entity["entity1"]["value"].split(":")[2]
+                e2 =json_entity["entity2"]["value"].split(":")[2]
+                relations.append((entity,"subject",e1))
+                relations.append((e1,"broader",e2))
+    #case 02
+        query = get_prefixes()+"""SELECT DISTINCT ?entity1 ?entity2 WHERE
+        {
+            ?entity1 dc:subject ?entity2 . 
+            ?entity2 dct:subject <http://dbpedia.org/resource/Category:"""+entity+""">  .
+            
+        }"""
+        sparql.setQuery(query=query)
+        sparql.setReturnFormat(JSON)
+        results = sparql.query().convert()
+        if len(results["results"]["bindings"])>0:
+            for json_entity in results["results"]["bindings"]:
+                #http://dbpedia.org/resource/Learning
+                e1 =json_entity["entity1"]["value"].split("/")[4]
+                e2 =json_entity["entity2"]["value"].split("/")[4]
+                relations.append((e1,"subject",e2))
+                relations.append((e2,"subject",entity))
+    #case 03
+        query = get_prefixes()+"""SELECT DISTINCT ?entity1 ?entity2 WHERE
+        {
+            ?entity1 dct:subject ?entity2 . 
+            ?entity2 skos:broader <http://dbpedia.org/resource/Category:"""+entity+""">  .
+            
+        }"""
+        sparql.setQuery(query=query)
+        sparql.setReturnFormat(JSON)
+        results = sparql.query().convert()
+        if len(results["results"]["bindings"])>0:
+            for json_entity in results["results"]["bindings"]:
+                #http://dbpedia.org/resource/Learning
+                e1 =json_entity["entity1"]["value"].split("/")[4]
+                e2 =json_entity["entity2"]["value"].split(":")[2]
+                relations.append((e1,"subject",e2))
+                relations.append((e2,"broader",entity))
+    if niveles > 3:
+        #caso01
+        query = get_prefixes()+ select_clause_generator(niveles-1)+""" WHERE
+        {   
+            <http://dbpedia.org/resource/"""+entity+"""> dct:subject ?entity1 . 
+            """+gen_n_relations(niveles-2,from_entity_number=1,relation="skos:broader")+"""
+              
+        }"""
+        sparql.setQuery(query=query)
+        sparql.setReturnFormat(JSON)
+        results = sparql.query().convert()
+        if len(results["results"]["bindings"])>0:
+            for json_entity in results["results"]["bindings"]:
+                #http://dbpedia.org/resource/Learning
+                entity1 = "entity"+str(1)
+                e1 =json_entity[entity1]["value"].split(":")[2]
+                relations.append((entity,"subject",e1))   
+                for i in range(1,niveles):
+                    entity1 = "entity"+str(i)
+                    entity2 = "entity"+str(i+1)
+                    e1 =json_entity[entity1]["value"].split(":")[2]
+                    e2 =json_entity[entity2]["value"].split(":")[2]
+                    relations.append((e1,"broader",e2))
+        #case 02
+        for n in range (1,niveles):
+            query = get_prefixes()+ select_clause_generator(niveles-1)+""" WHERE
+            {
+                <http://dbpedia.org/resource/"""+entity+"""> dc:subject ?entity1 . 
+                """+gen_n_relations(n-1,from_entity_number=1,relation="dc:subject")+"""
+                """+ gen_n_relations(1,from_entity_number=n-1,relation="dct:subject")+"""
+                """+gen_n_relations(niveles-1-n,from_entity_number=n,relation="skos:broader")+"""
+                
+            }"""
+            sparql.setQuery(query=query)
+            sparql.setReturnFormat(JSON)
+            results = sparql.query().convert()
+            if len(results["results"]["bindings"])>0:
+                for json_entity in results["results"]["bindings"]:
+                    #http://dbpedia.org/resource/Learning
+                    entity1 = "entity"+str(1)
+                    e1 =json_entity[entity1]["value"].split("/")[4]
+                    relations.append((entity,"subject",e1))   
+                    for n in range(1,niveles):
+                        for i in range(1,n+1):
+                            entity1 = "entity"+str(i)
+                            entity2 = "entity"+str(i+1)
+                            e1 =json_entity[entity1]["value"].split("/")[4]
+                            e2 =json_entity[entity2]["value"].split("/")[4]
+                        relations.append((e1,"subject",e2))
+                        for i in range(n,niveles):
+                            entity1 = "entity"+str(i)
+                            entity2 = "entity"+str(i+1)
+                            e1 =json_entity[entity1]["value"].split(":")[2]
+                            e2 =json_entity[entity2]["value"].split(":")[2]
+                        relations.append((e1,"broader",e2))
+        #caso03
+        query = get_prefixes()+ select_clause_generator(niveles-1)+""" WHERE
+        {
+            """+gen_n_relations(niveles-1,from_entity_number=1,relation="dc:subject")+"""
+              ?entity"""+str(niveles-1)+""" dct:subject <http://dbpedia.org/resource/Category:"""+entity+""">.
+        }"""
+        sparql.setQuery(query=query)
+        sparql.setReturnFormat(JSON)
+        results = sparql.query().convert()
+        if len(results["results"]["bindings"])>0:
+            for json_entity in results["results"]["bindings"]:
+                #http://dbpedia.org/resource/Learning
+                
+                for i in range(1,niveles):
+                    entity1 = "entity"+str(i)
+                    entity2 = "entity"+str(i+1)
+                    e1 =json_entity[entity1]["value"].split("/")[4]
+                    e2 =json_entity[entity2]["value"].split("/")[4]
+                    relations.append((e1,"subject",e2))
+                entity2 = "entity"+str(niveles-1)
+                e2 =json_entity[entity2]["value"].split("/")[4]
+                relations.append((e2,"broader",entity))
+        
+        #caso04
+        for n in range(1,niveles):
+            query = get_prefixes()+ select_clause_generator(niveles-1)+""" WHERE
+            {
+                """+gen_n_relations(n-1,from_entity_number=1,relation="dc:subject")+"""
+                """+ gen_n_relations(1,from_entity_number=n-1,relation="dct:subject")+"""
+                """+gen_n_relations(niveles-1-n,from_entity_number=n+1,relation="skos:broader")+"""
+                  ?entity"""+str(niveles-1)+""" skos:broader <http://dbpedia.org/resource/Category:"""+entity+""">.
+            }"""
+            sparql.setQuery(query=query)
+            sparql.setReturnFormat(JSON)
+            results = sparql.query().convert()
+            if len(results["results"]["bindings"])>0:
+                for json_entity in results["results"]["bindings"]:
+                    #http://dbpedia.org/resource/Learning
+                    for n in range(1,niveles):
+                        for i in range(1,n+1):
+                            entity1 = "entity"+str(i)
+                            entity2 = "entity"+str(i+1)
+                            e1 =json_entity[entity1]["value"].split("/")[4]
+                            e2 =json_entity[entity2]["value"].split("/")[4]
+                        relations.append((e1,"subject",e2))
+                        for i in range(n,niveles):
+                            entity1 = "entity"+str(i)
+                            entity2 = "entity"+str(i+1)
+                            e1 =json_entity[entity1]["value"].split(":")[2]
+                            e2 =json_entity[entity2]["value"].split(":")[2]
+                        relations.append((e1,"broader",e2))
+                    entity2 = "entity"+str(niveles-1)
+                    e2 =json_entity[entity2]["value"].split("/")[4]
+                    relations.append((e2,"broader",entity))
+    return relations
+
+def gen_n_relations(n,from_entity_number,relation):
+    s = ""
+    for i in range (from_entity_number,n+from_entity_number):
+        s = s + "?entity"+str(i)+" "+str(relation)+" "+"?entity"+str(i+1) + " . \n"
+    return s
+
+
+        
+
+
+
+            
+
+
             
 
 
