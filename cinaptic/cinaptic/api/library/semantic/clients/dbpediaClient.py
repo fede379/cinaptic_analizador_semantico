@@ -106,6 +106,14 @@ class DBPediaClient:
             LIMIT 5000
             OFFSET """+offset+"""
         """
+    def gen_graph_for_neo_no_dirigido(self,entity,niveles):
+        relations = []
+        graph={}
+        graph[0]=[entity]
+        for i in range(1,niveles):
+            relations, graph[i]  = get_all_relations_and_entities(list_of_entities=graph[i-1])
+        return relations
+
 
     def gen_graph_for_neo(self,entity,niveles):
         #explicacion: https://drive.google.com/file/d/12AkYQJjNaywTnrBSXWBAYTKefF9Letj8/view?usp=sharing
@@ -133,6 +141,83 @@ class DBPediaClient:
             print(r)
         print ("cantidad de relaciones: "+str(how_many_relations))
         return relations
+
+def get_all_relations_and_entities(list_of_entities):
+    next_level_list_of_entities = []
+    relations = []
+    for entity in list_of_entities:
+        print(get_all_broaders_no_dirigido(entity))
+        broader_relations, entities_from_broaders = get_all_broaders_no_dirigido(entity)
+        next_level_list_of_entities += entities_from_broaders
+        relations += broader_relations
+        subject_relations, entities_from_subjects = get_all_subjects_no_dirigido(entity)
+        next_level_list_of_entities += entities_from_subjects
+        relations += subject_relations
+    return relations, next_level_list_of_entities
+
+def get_all_broaders_no_dirigido(entity):
+    entities = []
+    relations = []
+    sparql = SPARQLWrapper(DBPEDIA_SPARKQL_ENDPOINT)
+    query = get_prefixes()+ """ 
+            SELECT DISTINCT ?entity 
+            WHERE { ?entity skos:broader <http://dbpedia.org/resource/Category:"""+entity+"""> .}"""
+    sparql.setQuery(query=query)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+    if len(results["results"]["bindings"])>0:
+        for json_entity in results["results"]["bindings"]:
+            #http://dbpedia.org/resource/Learning
+            e =json_entity["entity"]["value"].split(":")[2]
+            entities.append(e)
+            relations.append((e,"broader",entity))
+            relations.append((entity,"broader",e))
+    query = get_prefixes()+ """ 
+            SELECT DISTINCT ?entity 
+            WHERE { <http://dbpedia.org/resource/Category:"""+entity+"""> skos:broader  ?entity  .}"""
+    sparql.setQuery(query=query)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+    if len(results["results"]["bindings"])>0:
+        for json_entity in results["results"]["bindings"]:
+            #http://dbpedia.org/resource/Learning
+            e =json_entity["entity"]["value"].split(":")[2]
+            entities.append(e)
+            relations.append((entity,"broader",e))
+            relations.append((e,"broader",entity))
+    return relations, entities
+
+def get_all_subjects_no_dirigido(entity):
+    entities = []
+    relations = []
+    sparql = SPARQLWrapper(DBPEDIA_SPARKQL_ENDPOINT)
+    query = get_prefixes()+ """ 
+            SELECT DISTINCT ?entity 
+            WHERE { ?entity dct:subject <http://dbpedia.org/resource/Category:"""+entity+"""> .}"""
+    sparql.setQuery(query=query)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+    if len(results["results"]["bindings"])>0:
+        for json_entity in results["results"]["bindings"]:
+            #http://dbpedia.org/resource/Learning
+            e =json_entity["entity"]["value"].split("/")[4]
+            entities.append(e)
+            relations.append((e,"subject",entity))
+            relations.append((entity,"subject",e))
+    query = get_prefixes()+ """ 
+            SELECT DISTINCT ?entity 
+            WHERE { <http://dbpedia.org/resource/"""+entity+"""> dct:subject  ?entity  .}"""
+    sparql.setQuery(query=query)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+    if len(results["results"]["bindings"])>0:
+        for json_entity in results["results"]["bindings"]:
+            #http://dbpedia.org/resource/Learning
+            e =json_entity["entity"]["value"].split(":")[2]
+            entities.append(e)
+            relations.append((entity,"subject",e))
+            relations.append((e,"subject",entity))
+    return relations, entities
 
 def get_dct_subject_relations(entity,niveles):
     relations = []
