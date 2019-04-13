@@ -13,6 +13,28 @@ import pickle
 class ContextManager:
 
     def analyse_context(self, configurations):
+        """
+        configurations structure example:
+            {
+                u'keys': u'machine learning python algorithms', 
+                u'engines': 
+                            [
+                                {
+                                    u'engine': u'google', 
+                                    u'number_of_urls': 15, 
+                                    u'number_of_pages': 15, 
+                                    u'limit': 15, u'umbral': 0.6
+                                }, 
+                                {
+                                    u'engine': u'bing', 
+                                    u'number_of_urls': 15, 
+                                    u'number_of_pages': 2, 
+                                    u'limit': 15, u'umbral': 0.6
+                                }
+                            ], 
+                u'max_graph_level': 3
+            }
+        """
         print("Iniciando Procesamiento")
         keys_base_entities = self.get_keys_entities(configurations["keys"])
         print("Entidades de las claves de Busquedas obtenidas")

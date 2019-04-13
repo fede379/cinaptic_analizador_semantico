@@ -1,4 +1,4 @@
-from functools32 import lru_cache
+#from functools32 import lru_cache NO PUDE IMPORTAR
 
 from clients.dbpediaClient import DBPediaClient
 from clients.consts import *
@@ -7,7 +7,7 @@ from utils.utils import concat_arrays
 dbpedia_client = DBPediaClient()
 class GraphGenerator:
 
-    @lru_cache(maxsize=5000)
+    #@lru_cache(maxsize=5000)
     def build(self, entity=None, levels=1):
         grafo = []
         already_expanded = []
