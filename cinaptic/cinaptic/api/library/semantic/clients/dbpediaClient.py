@@ -114,7 +114,11 @@ class DBPediaClient:
         graph[0]=[entity]
         for i in range(1,niveles):
             relations, graph[i]  = get_all_relations_and_entities(list_of_entities=graph[i-1])
+            print (relations)
+            print (graph[i])
         end = time.time()
+        for rel in relations:
+            print(rel)
         print ("time: "+str(end-start))
         cantidad_nodos = 0
         for i in range(0,niveles):
