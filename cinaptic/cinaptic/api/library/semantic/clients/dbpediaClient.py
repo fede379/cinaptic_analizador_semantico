@@ -2,7 +2,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from consts import DBPEDIA_SPARKQL_ENDPOINT, \
     RESULTS, BINDINGS, VALUE, ARISTS_VALUE, NAME, \
     RELATION, SLASH_RESOURCE, TWO_POINTS
-
+import time
 class DBPediaClient:
 
     def build_query(self, field, field_type, entity, with_category):
@@ -106,13 +106,23 @@ class DBPediaClient:
             LIMIT 5000
             OFFSET """+offset+"""
         """
+
     def gen_graph_for_neo_no_dirigido(self,entity,niveles):
+        start = time.time()
         relations = []
         graph={}
         graph[0]=[entity]
         for i in range(1,niveles):
             relations, graph[i]  = get_all_relations_and_entities(list_of_entities=graph[i-1])
-        return relations
+        end = time.time()
+        print ("time: "+str(end-start))
+        cantidad_nodos = 0
+        for i in range(0,niveles):
+            cantidad_nodos += len(graph[i])
+        cantidad_relaciones = len(list(set(relations)))
+        print("cantidad_nodos: " + str(cantidad_nodos) )
+        print("cantidad_relaciones: " + str(cantidad_relaciones) )
+        return list(set(relations))
 
 
     def gen_graph_for_neo(self,entity,niveles):
@@ -146,7 +156,7 @@ def get_all_relations_and_entities(list_of_entities):
     next_level_list_of_entities = []
     relations = []
     for entity in list_of_entities:
-        print(get_all_broaders_no_dirigido(entity))
+        
         broader_relations, entities_from_broaders = get_all_broaders_no_dirigido(entity)
         next_level_list_of_entities += entities_from_broaders
         relations += broader_relations
