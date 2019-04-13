@@ -163,7 +163,7 @@ def get_all_relations_and_entities(list_of_entities):
         subject_relations, entities_from_subjects = get_all_subjects_no_dirigido(entity)
         next_level_list_of_entities += entities_from_subjects
         relations += subject_relations
-    return relations, next_level_list_of_entities
+    return relations, list(set(next_level_list_of_entities))
 
 def get_all_broaders_no_dirigido(entity):
     entities = []
@@ -195,7 +195,7 @@ def get_all_broaders_no_dirigido(entity):
             entities.append(e)
             relations.append((entity,"broader",e))
             relations.append((e,"broader",entity))
-    return relations, entities
+    return relations, list(set(entities))
 
 def get_all_subjects_no_dirigido(entity):
     entities = []
@@ -227,7 +227,7 @@ def get_all_subjects_no_dirigido(entity):
             entities.append(e)
             relations.append((entity,"subject",e))
             relations.append((e,"subject",entity))
-    return relations, entities
+    return relations, list(set(entities))
 
 def get_dct_subject_relations(entity,niveles):
     relations = []
