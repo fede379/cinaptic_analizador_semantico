@@ -26,10 +26,10 @@ IS_BROADER_OF = "is_broader_of"
 VALUE = "value"
 IS_OF_RELATIONS = "is_of_relations"
 ARISTS_VALUE = {
-    SUBJECT: 1,
-    BROADER: -1,
-    IS_BROADER_OF: 1,
-    IS_OF_RELATIONS :2
+    SUBJECT: 'subject',
+    BROADER: 'broader',
+    IS_BROADER_OF: 'is_broader_of',
+    IS_OF_RELATIONS :'is_subject_of'
 }
 NAME = "name"
 RELATION = "relation"
@@ -48,5 +48,6 @@ WHITE_SPACE = " "
 
 #Googles
 GOOGLE_API_KEY = "AIzaSyCKlCEJ41mE_6gqTN2AI9J4iSB-2L55zR0"
+#GOOGLE_API_KEY = "AIzaSyBPDKA4ng9iJCQ-XcYAD3y4ghPYc0ju5a0"
 GOOGLE_API_LANG = "en"
 GOOGLE_API_ENCODING = "utf8"

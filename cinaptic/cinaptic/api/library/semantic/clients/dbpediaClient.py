@@ -2,7 +2,6 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from consts import DBPEDIA_SPARKQL_ENDPOINT, \
     RESULTS, BINDINGS, VALUE, ARISTS_VALUE, NAME, \
     RELATION, SLASH_RESOURCE, TWO_POINTS
-from repoze.lru import lru_cache
 
 class DBPediaClient:
 

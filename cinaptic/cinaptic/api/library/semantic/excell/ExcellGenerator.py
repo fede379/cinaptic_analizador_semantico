@@ -2,17 +2,18 @@ import xlsxwriter
 
 class ExcellGenerator:
     def generate_excel(self, keys_entities, result_entities):
-        workbook = xlsxwriter.Workbook("pruebaCongreso.xlsx")
-        bold = workbook.add_format({'bold': True})
-        merge_format = workbook.add_format({
-            'bold': True,
-            'border': 6,
-            'align': 'center',
-            'valign': 'vcenter',
-            'fg_color': '#D7E4BC',
-
-        })
+        
         for i, res in enumerate(keys_entities):
+            workbook = xlsxwriter.Workbook("{0}.xlsx".format(i))
+            bold = workbook.add_format({'bold': True})
+            merge_format = workbook.add_format({
+                'bold': True,
+                'border': 6,
+                'align': 'center',
+                'valign': 'vcenter',
+                'fg_color': '#D7E4BC',
+
+            })
             for j, r in enumerate(res):
                 worksheet = workbook.add_worksheet(r.get("engine"))
                 row = 0
@@ -43,4 +44,5 @@ class ExcellGenerator:
                     else:
                         worksheet.merge_range(row, 1, row, 5, url.get("url"), merge_format)
                     row += 3
+        workbook.close()
         return None
