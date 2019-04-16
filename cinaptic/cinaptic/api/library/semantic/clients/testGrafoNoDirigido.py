@@ -1,4 +1,14 @@
 from dbpediaClient import DBPediaClient
-client = DBPediaClient()
+import pickle
 
-client.gen_graph_for_neo_no_dirigido("Machine_learning",3)
+client = DBPediaClient()
+file_name = "Pesticide_residue_5_levels"
+data = client.gen_graph_for_neo_no_dirigido("Pesticide_residue",5)
+outfile = open(filename,'wb')
+pickle.dump(data,outfile)
+outfile.close()
+#para abrir:
+
+infile = open(filename,'rb')
+data= pickle.load(infile)
+infile.close()
