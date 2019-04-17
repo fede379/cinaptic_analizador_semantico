@@ -1,5 +1,6 @@
 from neomodel import StructuredRel, StructuredNode, StringProperty, RelationshipTo, RelationshipFrom, config
-config.DATABASE_URL = 'bolt://neo4j:cinaptic@localhost:11001'
+# config.DATABASE_URL = 'bolt://neo4j:cinaptic@localhost:11001'
+config.DATABASE_URL = 'bolt://neo4j:cinaptic@localhost:7687'
 
 class SubjectRel(StructuredRel):
     rel = StringProperty()
@@ -20,47 +21,47 @@ class Entidad(StructuredNode):
     broader = RelationshipTo('Entidad', 'BROADER', model=BroaderRel)
     is_broader_of = RelationshipTo('Entidad', 'IS_BROADER_OF', model=isBroaderRel)
 
-from dbpediaClient import* 
-client = DBPediaClient()
-relations = client.gen_graph_for_neo("Pesticide_residue",5)
-for r in relations:
-    print r
-    try:
+# from .dbpediaClient import * 
+# client = DBPediaClient()
+# relations = client.gen_graph_for_neo("Pesticide_residue",5)
+# for r in relations:
+#     print(r)
+#     try:
         
-            e1 = Entidad.nodes.get_or_none(name=r[0])
-            if e1 is None:
-                e1 = Entidad(name=r[0])
-                e1.save()
-            e2 = Entidad.nodes.get_or_none(name=r[2])
-            if e2 is None:
-                e2 = Entidad(name=r[2])
-                e2.save()
-            if r[1] == 'subject':
-                rel = e1.subject.relationship(e2)
-                if rel is None:
-                    m = e2.subject.connect(e1)
-                    m.save()
-            if r[1] == 'broader':
-                rel = e1.broader.relationship(e2)
-                if rel is None:
-                    m = e2.broader.connect(e1)
-                    m.save()
+#             e1 = Entidad.nodes.get_or_none(name=r[0])
+#             if e1 is None:
+#                 e1 = Entidad(name=r[0])
+#                 e1.save()
+#             e2 = Entidad.nodes.get_or_none(name=r[2])
+#             if e2 is None:
+#                 e2 = Entidad(name=r[2])
+#                 e2.save()
+#             if r[1] == 'subject':
+#                 rel = e1.subject.relationship(e2)
+#                 if rel is None:
+#                     m = e2.subject.connect(e1)
+#                     m.save()
+#             if r[1] == 'broader':
+#                 rel = e1.broader.relationship(e2)
+#                 if rel is None:
+#                     m = e2.broader.connect(e1)
+#                     m.save()
 
-    except Exception, e:
-        print e
-        pass
+#     except Exception as e:
+#         print(e)
+#         pass
 
     
-#
-#class Entidad(StructuredNode):
+
+# class Book(StructuredNode):
 #    title = StringProperty(unique_index=True)
-#    entidad = RelationshipTo('Entidad', 'AUTHOR')
-#
-#class Author(StructuredNode):
+#    author = RelationshipTo('Author', 'AUTHOR')
+
+# class Author(StructuredNode):
 #    name = StringProperty(unique_index=True)
 #    books = RelationshipFrom('Book', 'AUTHOR')
-#
-#harry_potter = Book(title='Harry potter and the..').save()
-#rowling =  Author(name='J. K. Rowling').save()
-#harry_potter.author.connect(rowling)
+
+# harry_potter = Book(title='Harry potter and the..').save()
+# rowling =  Author(name='J. K. Rowling').save()
+# harry_potter.author.connect(rowling)
 

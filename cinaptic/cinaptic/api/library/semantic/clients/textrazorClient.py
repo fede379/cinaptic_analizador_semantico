@@ -8,7 +8,7 @@ class TextRazorClient:
             client = textrazor.TextRazor(extractors=[ENTITES, RELATIONS, TOPICS])
             response = client.analyze_url(url)
             return response
-        except Exception, e:
+        except Exception as e:
             print("ERROR For URL: {0} - {1}".format(url, str(e)))
             raise Exception()
 
@@ -18,6 +18,6 @@ class TextRazorClient:
             client = textrazor.TextRazor(extractors=[ENTITES, RELATIONS, TOPICS])
             response = client.analyze(text)
             return response
-        except Exception, e:
+        except Exception as e:
             print(str(e))
             raise Exception(str(e))

@@ -30,7 +30,7 @@ class EntityRecognizer:
             text_razor_entities = text_razor_client.get_entities_from_url(url=url)
             entities_recognized = self.recognize(tr_entities=text_razor_entities, umbral=umbral)
             return self.order_entities_by_relevance(entities_recognized, limit=limit)
-        except Exception, e:
+        except Exception as e:
             print(str(e))
 
         return []
@@ -49,7 +49,7 @@ class EntityRecognizer:
             
             entities_recognized = self.recognize(tr_entities=text_razor_entities, umbral=umbral)
             return self.order_entities_by_relevance(entities_recognized, limit=limit)
-        except Exception, e:
+        except Exception as e:
             print(str(e))
             raise Exception(str(e))
 

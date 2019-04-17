@@ -5,6 +5,8 @@ from EntitiesMapper import EntityMapper
 from Analyzer import Analyser
 from excell.ExcellGenerator import ExcellGenerator
 
+# main file 
+
 class GraphAnalysis:
 
     def process(self, configurations):
@@ -123,14 +125,14 @@ class GraphAnalysis:
 
         return configs
 
-builder = GraphAnalysis()
-builder.process({u'keys': u'pesticide', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.process({u'keys': u'treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.process({u'keys': u'residue', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.process({u'keys': u'pesticide treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.process({u'keys': u'pesticide residue', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.process({u'keys': u'residue treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.process({u'keys': u'pesticide residue treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder = GraphAnalysis()
+# builder.process({u'keys': u'pesticide', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.process({u'keys': u'treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.process({u'keys': u'residue', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.process({u'keys': u'pesticide treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.process({u'keys': u'pesticide residue', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.process({u'keys': u'residue treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.process({u'keys': u'pesticide residue treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 
 
 

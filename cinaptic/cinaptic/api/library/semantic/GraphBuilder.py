@@ -54,15 +54,15 @@ class GraphBuilder:
                     if rel is None:
                         m = e1.broader.connect(e2)
                         m.save()
-            except Exception, e:
-                print e
+            except Exception as e:
+                print(e)
                 pass
 
-builder = GraphBuilder()
-builder.build({u'keys': u'pesticide', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.build({u'keys': u'treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.build({u'keys': u'residue', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.build({u'keys': u'pesticide treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.build({u'keys': u'pesticide residue', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.build({u'keys': u'residue treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.build({u'keys': u'pesticide residue treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder = GraphBuilder()
+# builder.build({u'keys': u'pesticide', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.build({u'keys': u'treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.build({u'keys': u'residue', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.build({u'keys': u'pesticide treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.build({u'keys': u'pesticide residue', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.build({u'keys': u'residue treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.build({u'keys': u'pesticide residue treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})

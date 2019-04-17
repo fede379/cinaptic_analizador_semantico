@@ -1,5 +1,5 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
-from consts import DBPEDIA_SPARKQL_ENDPOINT, \
+from .consts import DBPEDIA_SPARKQL_ENDPOINT, \
     RESULTS, BINDINGS, VALUE, ARISTS_VALUE, NAME, \
     RELATION, SLASH_RESOURCE, TWO_POINTS
 import time
@@ -62,7 +62,7 @@ class DBPediaClient:
             results = sparql.query().convert()
             print(entity)
             return self.parse_entities(field=field, entities=results, is_broader_flag=is_broader_flag, level=level)
-        except Exception, e:
+        except Exception as e:
             print(str(e))
             return []
 
@@ -654,15 +654,3 @@ def gen_n_relations(n,from_entity_number,relation):
     for i in range (from_entity_number,n+from_entity_number):
         s = s + "?entity"+str(i)+" "+str(relation)+" "+"?entity"+str(i+1) + " . \n"
     return s
-
-
-        
-
-
-
-            
-
-
-            
-
-
