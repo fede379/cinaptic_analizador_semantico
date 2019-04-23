@@ -76,7 +76,7 @@ class EntityRecognizer:
         entities = []
         for i, entity in enumerate(tr_entities.entities()):
             #if entity.relevance_score >= umbral:
-            self.parse_entity(entity)
+            # print(self.parse_entity(entity))
             entities.append(self.parse_entity(entity))
 
         return entities
@@ -87,8 +87,10 @@ class EntityRecognizer:
         :param entity:
         :return:
         """
+        aux = entity.wikipedia_link.split(WIKI_REGEX)
         return {
-                ENTITY: entity.wikipedia_link.split(WIKI_REGEX)[1],
+                # ENTITY: entity.wikipedia_link.split(WIKI_REGEX)[1],
+                ENTITY: aux[len(aux) - 1] if len(aux) != 1 else entity.id,
                 RELEVANCE: entity.relevance_score,
                 LONG_NAME: entity.id,
                 WIKI: entity.wikipedia_link,
@@ -96,9 +98,9 @@ class EntityRecognizer:
             }
 
 
-#er = EntityRecognizer()
-#tests = er.recognize_from_text("machine learning python algorithms", 0, 5)
-#print(tests)
-#t2 = er.recognize_from_url('http://en.wikipedia.org/wiki/Machine_learning', 0.75, 10)
-#print(t2)
-#print(len(t2))
+# er = EntityRecognizer()
+# tests = er.recognize_from_text("machine learning python algorithms", 0, 5)
+# print(tests)
+# t2 = er.recognize_from_url('http://en.wikipedia.org/wiki/Machine_learning', 0.75, 10)
+# print(t2)
+# print(len(t2))

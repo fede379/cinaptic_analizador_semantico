@@ -3,14 +3,15 @@
 # and open the template in the editor.
 
 import os, sys; sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+import importlib
 from pattern.web import Yahoo, Google, SEARCH
-from consts import *
+from .consts import *
 
 class GoogleClient:
     def get_urls(self, q = "", n = 1, limit = 1):
         url = []
-        reload(sys)
-        sys.setdefaultencoding(GOOGLE_API_ENCODING)
+        importlib.reload(sys)
+        # sys.setdefaultencoding(GOOGLE_API_ENCODING)
         engine_google = Google(license=GOOGLE_API_KEY, language=GOOGLE_API_LANG)#(license=None, throttle=0.5, language=None)
         for i in range(1, (n + 1)):
             for result in engine_google.search(q, start=i, count=10, type=SEARCH, cached=False):

@@ -1,5 +1,5 @@
 import textrazor
-from consts import *
+from .consts import *
 class TextRazorClient:
 
     def get_entities_from_url(self, url):

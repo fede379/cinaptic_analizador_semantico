@@ -11,8 +11,12 @@ class GraphAnalysis:
 
     def process(self, configurations):
         #Recognize entities by engine
+        print("paso 1")
+        print("paso 1.1")
         keys_base_entities = self.get_keys_entities(configurations["keys"])
+        print("paso 1.2")
         url_base_entities = self.get_url_entities(configurations)
+        print("paso 2")
         print(url_base_entities)
         analyser = Analyser()
         print("Analizando entidades")
@@ -59,7 +63,7 @@ class GraphAnalysis:
                                                         umbral=configuration["umbral"],
                                                         limit = configuration["limit"])
                     })
-
+        print("entidades por url: ", result)
         return result
 
     def analyse_bing_urls(self, keys = "", bing_configuration = None):
@@ -125,8 +129,8 @@ class GraphAnalysis:
 
         return configs
 
-# builder = GraphAnalysis()
-# builder.process({u'keys': u'pesticide', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+builder = GraphAnalysis()
+builder.process({u'keys': u'treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 # builder.process({u'keys': u'treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 # builder.process({u'keys': u'residue', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 # builder.process({u'keys': u'pesticide treatment', u'depth':7, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
