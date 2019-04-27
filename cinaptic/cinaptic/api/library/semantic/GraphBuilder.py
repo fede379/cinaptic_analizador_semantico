@@ -7,6 +7,7 @@ import logging
 client = DBPedia()
 SUBJECT = 'subject'
 BROADER = 'broader'
+SINONYM = 'sinonym'
 logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
 class GraphBuilder:
@@ -56,6 +57,11 @@ class GraphBuilder:
                 if e2 is None:
                     e2 = Entidad(name=triple[2])
                     e2.save()
+                if triple[1] == SINONYM:
+                    rel = e1.sinonym.relationship(e2)
+                    if rel is None:
+                        m = e1.sinonym.connect(e2)
+                        m.save()
                 if triple[1] == SUBJECT:
                     rel = e1.subject.relationship(e2)
                     if rel is None:
@@ -73,8 +79,8 @@ class GraphBuilder:
 builder = GraphBuilder()
 #builder.build({u'keys': u'Pesticide', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Treatment', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-#builder.build({u'keys': u'Residue', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.build({u'keys': u'Pesticide_residue', u'depth':4, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+builder.build({u'keys': u'Residue', u'depth':3, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+#builder.build({u'keys': u'Pesticide_residue', u'depth':3, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Pesticide_treatment', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Residue_treatment', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Pesticide_residue_treatment', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})

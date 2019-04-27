@@ -9,6 +9,8 @@ BROADER = "broader"
 IS_SUBJECT_OF = "is_subject_of"
 SUBJECT = "subject"
 
+SINONYM = 'sinonym'
+
 TYPE = "type"
 ENTITY = "entity"
 VALUE = "value"
@@ -38,6 +40,10 @@ class DBPedia:
                         e = json_entity[ENTITY][VALUE].split(SLASH_RESOURCE)[1]
                     if(e != entity):
                         level_entities.append(e)
+                    if tp == SINONYM:
+                        e1 = entity
+                        e2 = e
+                        rel = SINONYM
                     if tp == IS_BROADER_OF or tp == IS_SUBJECT_OF:
                         e1 = entity
                         e2 = e
@@ -63,6 +69,8 @@ class DBPedia:
                 PREFIX  dbc:  <http://dbpedia.org/resource/Category:>
                 PREFIX  dct:  <http://purl.org/dc/terms/>
                 PREFIX  dbr: <http://dbpedia.org/resource/>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
                 SELECT  distinct ?entity, ?type
                 WHERE {
                     {
@@ -119,6 +127,29 @@ class DBPedia:
                         WHERE { 
                             <"""+resource_entity+"""> dct:subject  ?entity 
                         }
+                    }
+                    UNION {
+                            SELECT ?entity, 'sinonym' as ?type
+                            WHERE 
+                            { 
+                            {
+                            <"""+resource_entity+"""> <http://dbpedia.org/ontology/wikiPageDisambiguates> ?entity.
+                            }
+                            UNION
+                            { 
+                            <"""+resource_entity+"""> <http://dbpedia.org/ontology/wikiPageDisambiguates> ?entity.
+                            ?x <http://dbpedia.org/ontology/wikiPageDisambiguates> ?entity.
+                            }
+                            UNION
+                            {
+                            ?entity <http://dbpedia.org/ontology/wikiPageDisambiguates> <"""+resource_entity+""">.
+                            }
+                            UNION
+                            { 
+                            ?entity <http://dbpedia.org/ontology/wikiPageDisambiguates> <"""+resource_entity+""">.
+                            ?x <http://dbpedia.org/ontology/wikiPageDisambiguates> ?entity.
+                            }
+                            }
                     }
                 }
         """
