@@ -12,9 +12,7 @@ class GraphAnalysis:
     def process(self, configurations):
         #Recognize entities by engine
         print("paso 1")
-        print("paso 1.1")
         keys_base_entities = self.get_keys_entities(configurations["keys"])
-        print("paso 1.2")
         url_base_entities = self.get_url_entities(configurations)
         print("paso 2")
         print(url_base_entities)
@@ -23,9 +21,10 @@ class GraphAnalysis:
         results = analyser.analyse(keys_base_entities, url_base_entities)
         configs = self.get_configs(keys_base_entities)
         print(configs)
-        print("creando Excell")
+        print("Creando Excel")
         excell = ExcellGenerator()
         excell.generate_excel(results, configs)
+
     def get_url_entities(self, configurations):
         """
 
@@ -95,10 +94,9 @@ class GraphAnalysis:
         :return:Array with all Keys found by TextRazor
         """
         print("Analizando Claves de Busqueda")
-        entity_recognizer = EntityRecognizer()
-        recognized_entities = entity_recognizer.recognize_from_text(keys, umbral=0, limit=10)
-        print("Analizando Claves de Busqueda - Finalizado")
-        return recognized_entities
+        entity_recognizer = EntityRecognizer()        
+        # print("Analizando Claves de Busqueda - Finalizado")
+        return entity_recognizer.recognize_from_text(keys, umbral=0, limit=10)
 
     def get_configs(self, keys_entities):
         configs = [{

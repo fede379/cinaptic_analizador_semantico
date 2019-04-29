@@ -2,7 +2,7 @@ from repository.Neo4J import *
 from neomodel import db
 class Analyser:
 
-    def analyse(self, keys_enities, url_entities):
+    def analyse(self, keys_entities, url_entities):
         result = []
         for i, engine in enumerate(url_entities):
             engines = []
@@ -14,7 +14,7 @@ class Analyser:
                 table_x_url = []
                 for k, ue in enumerate(urls.get("entities")):
                     values = []
-                    for i, ke in enumerate(keys_enities):
+                    for i, ke in enumerate(keys_entities):
                         values.append({
                             "id": ke.get("entity"),
                             "value": self.exist_entity_in_graph(ue.get("entity"), ke.get("entity"))

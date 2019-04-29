@@ -49,8 +49,6 @@ class DBPediaClient:
 
         return default_endpoint
 
-
-
     #@lru_cache(maxsize=50000)
     def get_entities(self, field="", field_type="", entity="", with_category=False, is_broader_flag=False, level=0):
         try:

@@ -98,9 +98,9 @@ class EntityRecognizer:
             }
 
 
-# er = EntityRecognizer()
+er = EntityRecognizer()
 # tests = er.recognize_from_text("machine learning python algorithms", 0, 5)
 # print(tests)
-# t2 = er.recognize_from_url('http://en.wikipedia.org/wiki/Machine_learning', 0.75, 10)
-# print(t2)
-# print(len(t2))
+t2 = er.recognize_from_url('http://en.wikipedia.org/wiki/Machine_learning', 0.75, 10)
+print(t2)
+print(len(t2))

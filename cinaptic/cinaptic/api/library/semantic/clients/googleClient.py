@@ -12,7 +12,7 @@ class GoogleClient:
         url = []
         importlib.reload(sys)
         # sys.setdefaultencoding(GOOGLE_API_ENCODING)
-        engine_google = Google(license=GOOGLE_API_KEY, language=GOOGLE_API_LANG)#(license=None, throttle=0.5, language=None)
+        engine_google = Google(license=GOOGLE_API_KEY, language=GOOGLE_API_LANG)
         for i in range(1, (n + 1)):
             for result in engine_google.search(q, start=i, count=10, type=SEARCH, cached=False):
                 url.append(result.url)
