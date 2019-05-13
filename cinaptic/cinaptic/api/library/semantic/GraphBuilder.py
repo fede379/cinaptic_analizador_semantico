@@ -79,7 +79,7 @@ class GraphBuilder:
 builder = GraphBuilder()
 #builder.build({u'keys': u'Pesticide', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Treatment', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.build({u'keys': u'Residue', u'depth':3, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+builder.build({u'keys': u'Pesticide', u'depth':2, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Pesticide_residue', u'depth':3, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Pesticide_treatment', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Residue_treatment', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})

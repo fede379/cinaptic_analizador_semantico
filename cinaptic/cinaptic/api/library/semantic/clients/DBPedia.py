@@ -1,5 +1,5 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
-from consts import DBPEDIA_SPARKQL_ENDPOINT, \
+from .consts import DBPEDIA_SPARKQL_ENDPOINT, \
     RESULTS, BINDINGS, VALUE, ARISTS_VALUE, NAME, \
     RELATION, SLASH_RESOURCE, TWO_POINTS
 import time
