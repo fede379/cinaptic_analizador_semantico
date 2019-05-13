@@ -49,11 +49,11 @@ class GraphBuilder:
             print(triple)
             logging.debug(triple)
             try:
-                e1 = Entidad.nodes.get_or_none(name=triple[0])
+                e1 = Entidad.nodes.get_or_none(name=triple[0], idGraph=nameGraph)
                 if e1 is None:
                     e1 = Entidad(name=triple[0], idGraph= nameGraph)
                     e1.save()
-                e2 = Entidad.nodes.get_or_none(name=triple[2])
+                e2 = Entidad.nodes.get_or_none(name=triple[2], idGraph=nameGraph)
                 if e2 is None:
                     e2 = Entidad(name=triple[2], idGraph=nameGraph)
                     e2.save()
