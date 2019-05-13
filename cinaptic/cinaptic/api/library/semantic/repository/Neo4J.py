@@ -23,7 +23,7 @@ class sinonymRel(StructuredRel):
 
 class Entidad(StructuredNode):
     name = StringProperty(unique_index=True)
-    # idGraph = StringProperty()
+    idGraph = StringProperty()
     subject = RelationshipTo('Entidad', 'SUBJECT', model=SubjectRel)
     is_subject_of = RelationshipTo('Entidad', 'IS_SUBJECT_OF', model=IsSubjectRel)
     broader = RelationshipTo('Entidad', 'BROADER', model=BroaderRel)

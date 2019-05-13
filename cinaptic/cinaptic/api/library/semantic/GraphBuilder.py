@@ -22,10 +22,10 @@ class GraphBuilder:
         print("Time elapsed: {0}".format(end-start))
 
 
-    def gen_graph_for_neo(self,entity, depth):
+    def gen_graph_for_neo(self, entity, depth):
         print("ALMACENANDO NIVEL: {0}".format(0))
         triples_by_key, entities_not_processed = client.execute(entity)
-        self.process_massive_save_by_key(triples_by_key, 0)
+        self.process_massive_save_by_key(triples_by_key, entity)
         entities_processed = []
         entities_processed.append(entity)
         for i in range(0,depth):
@@ -34,28 +34,28 @@ class GraphBuilder:
             for ent in entities_not_processed:
                 if(ent not in entities_processed):
                     triples_by_key, lvl = client.execute(ent)
-                    self.process_massive_save_by_key(triples_by_key, i+1)
+                    self.process_massive_save_by_key(triples_by_key, entity)
                     entities_processed.append(ent)
                     #print("Entidades procesadas: "+len(entities_processed))
                     entities_not_processed = list(set(entities_not_processed + lvl))
 
     def process_keys_found(self, key = "", depth = 1):
         #Build triple with In DBPedia based on entities and depth
-        triples_by_key = self.gen_graph_for_neo(key,depth)
+        triples_by_key = self.gen_graph_for_neo(key, depth)
         #Store in Neo4J each triple
             
-    def process_massive_save_by_key(self, triples_by_key, k):
+    def process_massive_save_by_key(self, triples_by_key, nameGraph):
         for triple in triples_by_key:
             print(triple)
             logging.debug(triple)
             try:
                 e1 = Entidad.nodes.get_or_none(name=triple[0])
                 if e1 is None:
-                    e1 = Entidad(name=triple[0])
+                    e1 = Entidad(name=triple[0], idGraph= nameGraph)
                     e1.save()
                 e2 = Entidad.nodes.get_or_none(name=triple[2])
                 if e2 is None:
-                    e2 = Entidad(name=triple[2])
+                    e2 = Entidad(name=triple[2], idGraph=nameGraph)
                     e2.save()
                 if triple[1] == SINONYM:
                     rel = e1.sinonym.relationship(e2)
