@@ -1,8 +1,10 @@
 from EntityRecognizer import EntityRecognizer
 from EntitiesMapper import EntityMapper
 from Analyzer import Analyser
+from Results import Results
 from clients.DBPedia import * 
 from repository.Neo4J import *
+from neomodel import db
 import logging
 client = DBPedia()
 SUBJECT = 'subject'
@@ -17,7 +19,8 @@ class GraphBuilder:
         #process keys
         start = time.time()
         print("START")
-        self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
+        # self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
+        self.process_results(key=configurations["keys"])
         end = time.time()
         print("Time elapsed: {0}".format(end-start))
 
@@ -43,6 +46,13 @@ class GraphBuilder:
         #Build triple with In DBPedia based on entities and depth
         triples_by_key = self.gen_graph_for_neo(key, depth)
         #Store in Neo4J each triple
+
+    def process_results(self, key=''):
+        Results.closeness_algo(key, "BROADER", False)
+        Results.closeness_algo(key, "BROADER", True)
+        Results.closeness_harmonic_algo(key, "BROADER")
+        Results.betweenness_algo(key, "BROADER")
+        Results.pageRank_algo(key, "BROADER", 20, 0.85)
             
     def process_massive_save_by_key(self, triples_by_key, nameGraph):
         for triple in triples_by_key:
@@ -74,7 +84,8 @@ class GraphBuilder:
                         m.save()
             except Exception as e:
                 print(e)
-                pass
+                pass   
+
 
 builder = GraphBuilder()
 #builder.build({u'keys': u'Pesticide', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
