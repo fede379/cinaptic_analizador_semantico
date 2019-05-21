@@ -19,7 +19,7 @@ class GraphBuilder:
         #process keys
         start = time.time()
         print("START")
-        # self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
+        #self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
         self.process_results(key=configurations["keys"])
         end = time.time()
         print("Time elapsed: {0}".format(end-start))
@@ -48,11 +48,13 @@ class GraphBuilder:
         #Store in Neo4J each triple
 
     def process_results(self, key=''):
-        Results.closeness_algo(key, "BROADER", False)
-        Results.closeness_algo(key, "BROADER", True)
-        Results.closeness_harmonic_algo(key, "BROADER")
-        Results.betweenness_algo(key, "BROADER")
-        Results.pageRank_algo(key, "BROADER", 20, 0.85)
+        # CypherQueries.closeness_algo(key, "BROADER", False)
+        # CypherQueries.closeness_algo(key, "BROADER", True)
+        # CypherQueries.closeness_harmonic_algo(key, "BROADER")
+        # CypherQueries.betweenness_algo(key, "BROADER")
+        res, header = CypherQueries.pageRank_algo(key, "BROADER", 20, 0.85)
+        #Test
+        CypherQueries.exportCsv('pageRank.csv', header, res )
             
     def process_massive_save_by_key(self, triples_by_key, nameGraph):
         for triple in triples_by_key:
