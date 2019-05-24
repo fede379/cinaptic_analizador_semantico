@@ -13,7 +13,7 @@ BROADER = 'broader'
 SINONYM = 'sinonym'
 RELATIONS = [SUBJECT.upper(), BROADER.upper()]
 
-logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 class GraphBuilder:
     def build(self, configurations):
@@ -23,7 +23,7 @@ class GraphBuilder:
         start = time.time()
         print("START")
         logging.info("Start!")
-        # self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
+        self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
         self.process_results(key=configurations["keys"])
         end = time.time()
         print("Time elapsed: {0}".format(end-start))
@@ -46,8 +46,8 @@ class GraphBuilder:
                     triples_by_key, lvl = client.execute(ent)
                     self.process_massive_save_by_key(triples_by_key, entity)
                     entities_processed.append(ent)
-                    print("Entidades procesadas: "+len(entities_processed))
-                    logging.info("Entidades procesadas: "+len(entities_processed))
+                    print("Entidades procesadas: "+str(len(entities_processed)))
+                    logging.info("Entidades procesadas: "+str(len(entities_processed)))
                     entities_not_processed = list(set(entities_not_processed + lvl))
 
     def process_keys_found(self, key = "", depth = 1):

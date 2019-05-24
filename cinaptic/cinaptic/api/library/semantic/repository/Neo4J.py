@@ -1,6 +1,7 @@
 from neomodel import StructuredRel, StructuredNode, StringProperty, RelationshipTo, RelationshipFrom, config
 #config.DATABASE_URL = 'bolt://neo4j:Pesticide@localhost:11004'
-config.DATABASE_URL = 'bolt://neo4j:cinaptic@localhost:7687'
+# config.DATABASE_URL = 'bolt://neo4j:cinaptic@localhost:7687'
+config.DATABASE_URL = 'bolt://neo4j:cinaptic@10.13.0.146:7687'
 #config.DATABASE_URL = 'bolt://neo4j:Pesticide_treatment@localhost:11001'
 #config.DATABASE_URL = 'bolt://neo4j:Treatment@localhost:11001'
 #config.DATABASE_URL = 'bolt://neo4j:Residue_treatment@localhost:11001'
