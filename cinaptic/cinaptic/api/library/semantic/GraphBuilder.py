@@ -1,16 +1,19 @@
 from EntityRecognizer import EntityRecognizer
 from EntitiesMapper import EntityMapper
 from Analyzer import Analyser
-from Results import Results
+from CypherQueries import CypherQueries
 from clients.DBPedia import * 
 from repository.Neo4J import *
 from neomodel import db
 import logging
 client = DBPedia()
+cypherQueries = CypherQueries()
 SUBJECT = 'subject'
 BROADER = 'broader'
 SINONYM = 'sinonym'
-logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+RELATIONS = [SUBJECT.upper(), BROADER.upper()]
+
+logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
 class GraphBuilder:
     def build(self, configurations):
@@ -19,27 +22,32 @@ class GraphBuilder:
         #process keys
         start = time.time()
         print("START")
-        #self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
+        logging.info("Start!")
+        # self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
         self.process_results(key=configurations["keys"])
         end = time.time()
         print("Time elapsed: {0}".format(end-start))
+        logging.info("Time elapsed: {0}".format(end-start))
 
 
     def gen_graph_for_neo(self, entity, depth):
         print("ALMACENANDO NIVEL: {0}".format(0))
+        logging.info("ALMACENANDO NIVEL: {0}".format(0))
         triples_by_key, entities_not_processed = client.execute(entity)
         self.process_massive_save_by_key(triples_by_key, entity)
         entities_processed = []
         entities_processed.append(entity)
         for i in range(0,depth):
             print("ALMACENANDO NIVEL: {0}".format(i + 1))
+            logging.info("ALMACENANDO NIVEL: {0}".format(i + 1))
             lvl = []
             for ent in entities_not_processed:
                 if(ent not in entities_processed):
                     triples_by_key, lvl = client.execute(ent)
                     self.process_massive_save_by_key(triples_by_key, entity)
                     entities_processed.append(ent)
-                    #print("Entidades procesadas: "+len(entities_processed))
+                    print("Entidades procesadas: "+len(entities_processed))
+                    logging.info("Entidades procesadas: "+len(entities_processed))
                     entities_not_processed = list(set(entities_not_processed + lvl))
 
     def process_keys_found(self, key = "", depth = 1):
@@ -48,13 +56,12 @@ class GraphBuilder:
         #Store in Neo4J each triple
 
     def process_results(self, key=''):
-        # CypherQueries.closeness_algo(key, "BROADER", False)
-        # CypherQueries.closeness_algo(key, "BROADER", True)
-        # CypherQueries.closeness_harmonic_algo(key, "BROADER")
-        # CypherQueries.betweenness_algo(key, "BROADER")
-        res, header = CypherQueries.pageRank_algo(key, "BROADER", 20, 0.85)
-        #Test
-        CypherQueries.exportCsv('pageRank.csv', header, res )
+        for rel in RELATIONS:
+            cypherQueries.closeness_algo(key, rel, False)
+            cypherQueries.closeness_harmonic_algo(key, rel)
+            cypherQueries.closeness_algo(key, rel, True)
+            cypherQueries.betweenness_algo(key, rel)
+            cypherQueries.pageRank_algo(key, rel, 20, 0.85)
             
     def process_massive_save_by_key(self, triples_by_key, nameGraph):
         for triple in triples_by_key:

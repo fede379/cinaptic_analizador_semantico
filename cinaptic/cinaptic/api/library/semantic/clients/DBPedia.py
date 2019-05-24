@@ -3,6 +3,7 @@ from .consts import DBPEDIA_SPARKQL_ENDPOINT, \
     RESULTS, BINDINGS, VALUE, ARISTS_VALUE, NAME, \
     RELATION, SLASH_RESOURCE, TWO_POINTS
 import time
+import logging
 IS_BROADER_OF = "is_broader_of"
 BROADER = "broader"
 
@@ -55,11 +56,14 @@ class DBPedia:
                     #node = "{e1} ---{rel}--->  {e2}".format(e1=e1, rel=rel, e2=e2)
                     #print(node)
                     relations.append((e1, rel, e2))
-        except:
+        except e:
+            logging.error(e)
             pass
         try:
             print("{0} Entidades encontradas para: {1}".format(len(relations), entity))
-        except:
+            logging.info("{0} Entidades encontradas para: {1}".format(len(relations), entity))
+        except e:
+            logging.error(e)
             pass
         return relations, level_entities
 
