@@ -1,7 +1,8 @@
 from daemonize import Daemonize
 from cinaptic.cinaptic.api.library.semantic.GraphBuilder import GraphBuilder 
 from cinaptic.cinaptic.api.library.semantic.Config import Config
-pid = "/tmp/test.pid"
+
+pid = "/tmp/cinapticApp.pid"
 
 class App:
     def run(self):
@@ -20,4 +21,3 @@ def main():
 
 app = App()
 app.run()
-
