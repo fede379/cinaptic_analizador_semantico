@@ -1,9 +1,9 @@
-from EntityRecognizer import EntityRecognizer
-from EntitiesMapper import EntityMapper
-from Analyzer import Analyser
-from CypherQueries import CypherQueries
-from clients.DBPedia import * 
-from repository.Neo4J import *
+# from EntityRecognizer import EntityRecognizer
+# from EntitiesMapper import EntityMapper
+# from Analyzer import Analyser
+from .CypherQueries import CypherQueries
+from .clients.DBPedia import * 
+from .repository.Neo4J import *
 from neomodel import db
 import logging
 client = DBPedia()
@@ -28,7 +28,6 @@ class GraphBuilder:
         end = time.time()
         print("Time elapsed: {0}".format(end-start))
         logging.info("Time elapsed: {0}".format(end-start))
-
 
     def gen_graph_for_neo(self, entity, depth):
         print("ALMACENANDO NIVEL: {0}".format(0))
@@ -66,7 +65,7 @@ class GraphBuilder:
     def process_massive_save_by_key(self, triples_by_key, nameGraph):
         for triple in triples_by_key:
             print(triple)
-            logging.debug(triple)
+            logging.info(triple)
             try:
                 e1 = Entidad.nodes.get_or_none(name=triple[0], idGraph=nameGraph)
                 if e1 is None:
@@ -93,13 +92,13 @@ class GraphBuilder:
                         m.save()
             except Exception as e:
                 print(e)
-                pass   
+                pass
 
 
-builder = GraphBuilder()
+# builder = GraphBuilder()
 #builder.build({u'keys': u'Pesticide', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Treatment', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
-builder.build({u'keys': u'Pesticide', u'depth':2, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
+# builder.build({u'keys': u'Pesticide', u'depth':2, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Pesticide_residue', u'depth':3, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Pesticide_treatment', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})
 #builder.build({u'keys': u'Residue_treatment', u'depth':5, u'engines': [{u'engine': u'google', u'number_of_urls': 10, u'number_of_pages': 10, u'limit': 15, u'umbral': 0.1}], u'max_graph_level': 7})

@@ -1,6 +1,7 @@
-from repository.Neo4J import *
+from .repository.Neo4J import *
 from neomodel import db
 import csv
+import logging
 
 class CypherQueries:
     def closeness_algo(self, nameGraph, relation, improved):
@@ -13,8 +14,9 @@ class CypherQueries:
                         LIMIT 20;
                         """
         results, header = db.cypher_query(query)
-        meta = f"Resultados algoritmo Closeness idGraph {nameGraph} relation {relation} improved {improved}"
+        meta = f"Closeness idGraph {nameGraph} relation {relation} improved {improved}"
         print(meta, results)
+        logging.info(meta)
         self.exportCsv("_".join(meta.split(" ")), header, results)
         return results, header
 
@@ -28,8 +30,9 @@ class CypherQueries:
                         LIMIT 20;
                         """
         results, header = db.cypher_query(query)
-        meta = f"Resultados algoritmo Harmonic Closeness idGraph {nameGraph} relation {relation}"
+        meta = f"Harmonic Closeness idGraph {nameGraph} relation {relation}"
         print(meta, results)
+        logging.info(meta)
         self.exportCsv("_".join(meta.split(" ")), header, results)
         return results, header
 
@@ -43,8 +46,9 @@ class CypherQueries:
                         LIMIT 20;
                         """
         results, header = db.cypher_query(query)
-        meta = f"Resultados algoritmo Betweenness idGraph {nameGraph} relation {relation}"
+        meta = f"Betweenness idGraph {nameGraph} relation {relation}"
         print(meta, results)
+        logging.info(meta)
         self.exportCsv("_".join(meta.split(" ")), header, results)
         return results, header
 
@@ -58,8 +62,9 @@ class CypherQueries:
                         LIMIT 20;
                         """
         results, header = db.cypher_query(query)
-        meta = f"Resultados algoritmo PageRank idGraph {nameGraph} relation {relation} iterations {iterations} dampingFactor {dampingFactor}"
+        meta = f"PageRank idGraph {nameGraph} relation {relation} iterations {iterations} dampingFactor {dampingFactor}"
         print(meta, results)
+        logging.info(meta)
         self.exportCsv("_".join(meta.split(" ")), header, results)
         return results, header
 
