@@ -14,10 +14,10 @@ def main():
     app = App()
     app.run()
 
-daemon = Daemonize(app="cinaptic", pid=pid, action=main)
-daemon.start()
+# daemon = Daemonize(app="cinaptic", pid=pid, action=main)
+# daemon.start()
 
 
-# app = App()
-# app.run()
+app = App()
+app.run()
 
