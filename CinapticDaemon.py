@@ -1,9 +1,10 @@
+#!/usr/bin/env python3
 from daemonize import Daemonize
 from cinaptic.cinaptic.api.library.semantic.GraphBuilder import GraphBuilder
 from cinaptic.cinaptic.api.library.semantic.Config import Config
 import logging
 
-pid = "/tmp/cinapticApp.pid"
+pid = "/cinaptic.pid"
 
 # logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,8 +20,6 @@ class App2:
         config = Config().getParameters()
         builder = GraphBuilder()
         builder.build(config)
-        # print(config)
-
 
 def main():
     app = App2()
@@ -28,7 +27,3 @@ def main():
 
 daemon = Daemonize(app="cinaptic", pid=pid, action=main, keep_fds=keep_fds)
 daemon.start()
-
-
-# app = App2()
-# app.run()

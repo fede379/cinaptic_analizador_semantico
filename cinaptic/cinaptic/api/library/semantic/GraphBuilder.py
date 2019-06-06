@@ -1,13 +1,13 @@
 # from EntityRecognizer import EntityRecognizer
 # from EntitiesMapper import EntityMapper
 # from Analyzer import Analyser
-#from .CypherQueries import CypherQueries
+from .CypherQueries import CypherQueries
 from .clients.DBPedia import * 
 from .repository.Neo4J import *
 from neomodel import db
 import logging
 client = DBPedia()
-# cypherQueries = CypherQueries()
+cypherQueries = CypherQueries()
 SUBJECT = 'subject'
 BROADER = 'broader'
 SINONYM = 'sinonym'
@@ -24,7 +24,7 @@ class GraphBuilder:
         print("START")
         logging.info("Start!")
         self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
-        #self.process_results(key=configurations["keys"])
+        self.process_results(key=configurations["keys"])
         end = time.time()
         print("Time elapsed: {0}".format(end-start))
         logging.info("Time elapsed: {0}".format(end-start))
