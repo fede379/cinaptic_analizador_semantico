@@ -23,7 +23,7 @@ class GraphBuilder:
         start = time.time()
         print("START")
         logging.info("Start!")
-        self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
+        # self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
         self.process_results(key=configurations["keys"])
         end = time.time()
         print("Time elapsed: {0}".format(end-start))
