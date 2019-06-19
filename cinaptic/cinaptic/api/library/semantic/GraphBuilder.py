@@ -13,7 +13,7 @@ BROADER = 'broader'
 SINONYM = 'sinonym'
 RELATIONS = [SUBJECT.upper(), BROADER.upper()]
 
-logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+# logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 class GraphBuilder:
     def build(self, configurations):
