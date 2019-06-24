@@ -1,29 +1,50 @@
 #!/usr/bin/env python3
-from daemonize import Daemonize
+import daemon
+import logging
+import logging.handlers
+import argparse
+import re
 from cinaptic.cinaptic.api.library.semantic.GraphBuilder import GraphBuilder
 from cinaptic.cinaptic.api.library.semantic.Config import Config
-import logging
 
-pid = "/cinaptic.pid"
+logging.basicConfig()
 
-# logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler("app.log", "w")
-fh.setLevel(logging.INFO)
-logger.addHandler(fh)
-keep_fds = [fh.stream.fileno()]
+file_logger = logging.FileHandler("app.log", "w")
 
+logger = logging.getLogger()
+logger.addHandler(file_logger)
+logger.setLevel(logging.DEBUG)
 
-class App2:
-    def run(self):
-        config = Config().getParameters()
-        builder = GraphBuilder()
-        builder.build(config)
+def check_string(value):    
+    ivalue = str(value).strip()
+    regex = re.compile('^([a-zA-Z ]+)+$')
+    if not regex.match(ivalue):
+        raise argparse.ArgumentTypeError(
+            "%s is an invalid string value" % value)
+    return ivalue
 
-def main():
-    app = App2()
-    app.run()
+def check_int(value):
+    try:
+        ivalue = int(value)
+        if ivalue <= 0:
+            raise argparse.ArgumentTypeError(
+                "%s must be a positive integer" % value)
+        return ivalue
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(
+            "%s must be a positive integer" % value)
 
-daemon = Daemonize(app="cinaptic", pid=pid, action=main, keep_fds=keep_fds)
-daemon.start()
+parser = argparse.ArgumentParser(description="Cinaptic Semantic Analizer")
+parser.add_argument("keys", type=check_string,
+                    help="Search keys for the knowledge graph")
+parser.add_argument("-d", "--depth", type=check_int,
+                    help="depth of the knowlegde graph")
+
+config = Config().getParameters()
+args = parser.parse_args()
+config["keys"] = args.keys.strip()
+if args.depth is not None:
+    config["depth"] = int(args.depth)
+with daemon.DaemonContext(files_preserve=[file_logger.stream.fileno()]):
+    builder = GraphBuilder()
+    builder.build(config)

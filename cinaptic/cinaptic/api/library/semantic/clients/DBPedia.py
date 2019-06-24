@@ -19,6 +19,8 @@ VALUE = "value"
 SLASH_RESOURCE = "/resource/"
 CATEGORY_RESOURCE = "/Category:"
 
+logger = logging.getLogger()
+
 class DBPedia:
     def execute(self, entity):
         level_entities = []
@@ -57,13 +59,13 @@ class DBPedia:
                     #print(node)
                     relations.append((e1, rel, e2))
         except e:
-            logging.error(e)
+            logger.error(e)
             pass
         try:
             print("{0} Entidades encontradas para: {1}".format(len(relations), entity))
-            logging.info("{0} Entidades encontradas para: {1}".format(len(relations), entity))
+            logger.info("{0} Entidades encontradas para: {1}".format(len(relations), entity))
         except e:
-            logging.error(e)
+            logger.error(e)
             pass
         return relations, level_entities
 
