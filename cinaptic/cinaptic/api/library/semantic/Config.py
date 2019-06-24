@@ -8,13 +8,13 @@ class Config:
             config.read('config.ini')
             graphBuilder = config['GraphBuilder']
             parameters = {}
-            parameters["keys"] = graphBuilder['KEYS']
+            parameters["entity"] = graphBuilder['ENTITY']
             parameters["depth"] = int(graphBuilder['DEPTH'])
             return parameters
             pass
         except Exception as e:
             logging.error(e)
-            pass            
+            pass
 
 configu = Config()
 configu.getParameters()
