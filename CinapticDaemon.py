@@ -23,18 +23,22 @@ def check_string(value):
             "%s is an invalid string value" % value)
     return ivalue
 
-def check_int(value):    
-    ivalue = int(value)    
-    if ivalue <= 0:
+def check_int(value):
+    try:
+        ivalue = int(value)
+        if ivalue <= 0:
+            raise argparse.ArgumentTypeError(
+                "%s must be a positive integer" % value)
+        return ivalue
+    except ValueError as e:
         raise argparse.ArgumentTypeError(
-            "%s must be positive" % value)
-    return ivalue
+            "%s must be a positive integer" % value)
 
 parser = argparse.ArgumentParser(description="Cinaptic Semantic Analizer")
 parser.add_argument("keys", type=check_string,
                     help="Search keys for the knowledge graph")
 parser.add_argument("-d", "--depth", type=check_int,
-                    help="increase output verbosity")
+                    help="depth of the knowlegde graph")
 
 config = Config().getParameters()
 args = parser.parse_args()
