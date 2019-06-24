@@ -1,29 +1,35 @@
 #!/usr/bin/env python3
-from daemonize import Daemonize
+import daemon
+import logging
+import logging.handlers
+import argparse
+import re
 from cinaptic.cinaptic.api.library.semantic.GraphBuilder import GraphBuilder
 from cinaptic.cinaptic.api.library.semantic.Config import Config
-import logging
 
-pid = "/cinaptic.pid"
+logging.basicConfig()
 
-# logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler("app.log", "w")
-fh.setLevel(logging.INFO)
-logger.addHandler(fh)
-keep_fds = [fh.stream.fileno()]
+file_logger = logging.FileHandler("app.log", "w")
 
+logger = logging.getLogger()
+logger.addHandler(file_logger)
+logger.setLevel(logging.DEBUG)
 
-class App2:
-    def run(self):
-        config = Config().getParameters()
-        builder = GraphBuilder()
-        builder.build(config)
+def check_string(value):    
+    ivalue = str(value).strip()
+    regex = re.compile('^([a-zA-Z ]+)+$')
+    if not regex.match(ivalue):
+        raise argparse.ArgumentTypeError(
+            "%s is an invalid string value" % value)
+    return ivalue
 
-def main():
-    app = App2()
-    app.run()
+parser = argparse.ArgumentParser(description="Cinaptic Semantic Analizer")
+parser.add_argument("keys", type=check_string,
+                    help="Search keys for the knowledge graph")
 
-daemon = Daemonize(app="cinaptic", pid=pid, action=main, keep_fds=keep_fds)
-daemon.start()
+config = Config().getParameters()
+args = parser.parse_args()
+config["keys"] = args.keys.strip()
+with daemon.DaemonContext(files_preserve=[file_logger.stream.fileno()]):
+    builder = GraphBuilder()
+    builder.build(config)

@@ -13,6 +13,8 @@ BROADER = 'broader'
 SINONYM = 'sinonym'
 RELATIONS = [SUBJECT.upper(), BROADER.upper()]
 
+logger = logging.getLogger()
+
 # logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 class GraphBuilder:
@@ -22,23 +24,23 @@ class GraphBuilder:
         #process keys
         start = time.time()
         print("START")
-        logging.info("Start!")
-        # self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
+        logger.info("Start!")
+        self.process_keys_found(key=configurations["keys"], depth=configurations["depth"])
         self.process_results(key=configurations["keys"])
         end = time.time()
         print("Time elapsed: {0}".format(end-start))
-        logging.info("Time elapsed: {0}".format(end-start))
+        logger.info("Time elapsed: {0}".format(end-start))
 
     def gen_graph_for_neo(self, entity, depth):
         print("ALMACENANDO NIVEL: {0}".format(0))
-        logging.info("ALMACENANDO NIVEL: {0}".format(0))
+        logger.info("ALMACENANDO NIVEL: {0}".format(0))
         triples_by_key, entities_not_processed = client.execute(entity)
         self.process_massive_save_by_key(triples_by_key, entity)
         entities_processed = []
         entities_processed.append(entity)
         for i in range(0,depth):
             print("ALMACENANDO NIVEL: {0}".format(i + 1))
-            logging.info("ALMACENANDO NIVEL: {0}".format(i + 1))
+            logger.info("ALMACENANDO NIVEL: {0}".format(i + 1))
             lvl = []
             for ent in entities_not_processed:
                 if(ent not in entities_processed):
@@ -46,7 +48,7 @@ class GraphBuilder:
                     self.process_massive_save_by_key(triples_by_key, entity)
                     entities_processed.append(ent)
                     print("Entidades procesadas: "+str(len(entities_processed)))
-                    logging.info("Entidades procesadas: "+str(len(entities_processed)))
+                    logger.info("Entidades procesadas: "+str(len(entities_processed)))
                     entities_not_processed = list(set(entities_not_processed + lvl))
 
     def process_keys_found(self, key = "", depth = 1):
@@ -65,7 +67,7 @@ class GraphBuilder:
     def process_massive_save_by_key(self, triples_by_key, nameGraph):
         for triple in triples_by_key:
             print(triple)
-            logging.info(triple)
+            logger.info(triple)
             try:
                 e1 = Entidad.nodes.get_or_none(name=triple[0], idGraph=nameGraph)
                 if e1 is None:
