@@ -7,14 +7,17 @@ class Config:
         try:
             config.read('config.ini')
             graphBuilder = config['GraphBuilder']
+            log = config['Logger']
             parameters = {}
             parameters["entity"] = graphBuilder['ENTITY']
             parameters["depth"] = int(graphBuilder['DEPTH'])
+            parameters["loglevel"] = int(log['LEVEL'])
+            parameters["logfile"] = log['LOGFILE']
             return parameters
             pass
         except Exception as e:
             logging.error(e)
             pass
 
-configu = Config()
-configu.getParameters()
+# configuration = Config()
+# configuration.getParameters()

@@ -2,49 +2,33 @@
 import logging
 import logging.handlers
 import argparse
-import re
-from operator import methodcaller
+from cinaptic.cinaptic.api.library.semantic.utils.utils import check_int, check_string, check_path, parse_string
 from cinaptic.cinaptic.api.library.semantic.GraphBuilder import GraphBuilder
 from cinaptic.cinaptic.api.library.semantic.Config import Config
+config = Config().getParameters()
 
-logging.basicConfig()
-
-file_logger = logging.FileHandler("app.log", "w")
-
-logger = logging.getLogger()
-logger.addHandler(file_logger)
-logger.setLevel(logging.DEBUG)
-
-def parse_string(s):
-    return "_".join(filter(lambda x: x is not "", map(methodcaller("strip"), s.strip().split(" ")))).capitalize()
-
-def check_string(value):    
-    ivalue = str(value).strip()
-    regex = re.compile('^([a-zA-Z ]+)+$')
-    if not regex.match(ivalue):
-        raise argparse.ArgumentTypeError(
-            "%s is an invalid string value" % value)
-    return ivalue
-
-def check_int(value):
-    try:
-        ivalue = int(value)
-        if ivalue <= 0:
-            raise argparse.ArgumentTypeError(
-                "%s must be a positive integer" % value)
-        return ivalue
-    except ValueError as e:
-        raise argparse.ArgumentTypeError(
-            "%s must be a positive integer" % value)
-
+# argparse
 parser = argparse.ArgumentParser(description="Cinaptic Semantic Analizer")
 parser.add_argument("entity", type=check_string,
                     help="Entity for the knowledge graph")
-parser.add_argument("-d", "--depth", type=check_int,
+parser.add_argument("-d", "--depth", type=check_int, dest="depth",
                     help="Depth of the knowlegde graph")
-
-config = Config().getParameters()
+parser.add_argument('-D', '--debug',
+    help="Log lots of debugging statements",
+    action="store_const", dest="loglevel", const=logging.DEBUG, default=config['loglevel'])
+parser.add_argument('-l', '--log',
+    help="Enter a path to change the default log file",
+    type=check_path , dest="logfile", default=config['logfile'])
 args = parser.parse_args()
+
+# logger
+logging.basicConfig()
+file_logger = logging.FileHandler(args.logfile, "w")
+logger = logging.getLogger()
+logger.addHandler(file_logger)
+logger.setLevel(args.loglevel)
+
+# main
 config["entity"] = parse_string(args.entity)
 if args.depth is not None:
     config["depth"] = int(args.depth)
