@@ -16,7 +16,7 @@ class CypherQueries:
         meta = f"Closeness idGraph {nameGraph} relation {relation} improved {improved}"
         #print(meta, results)
         logging.info(meta)
-        self.exportCsv("_".join(meta.split(" ")), header, results)
+        self.exportCsv("_".join(meta.split(" ")), header, results, nameGraph)
         return results, header
 
     def closeness_harmonic_algo(self, nameGraph, relation):
@@ -31,7 +31,7 @@ class CypherQueries:
         meta = f"Harmonic Closeness idGraph {nameGraph} relation {relation}"
         #print(meta, results)
         logging.info(meta)
-        self.exportCsv("_".join(meta.split(" ")), header, results)
+        self.exportCsv("_".join(meta.split(" ")), header, results, nameGraph)
         return results, header
 
     def betweenness_algo(self, nameGraph, relation):
@@ -46,7 +46,7 @@ class CypherQueries:
         meta = f"Betweenness idGraph {nameGraph} relation {relation}"
         #print(meta, results)
         logging.info(meta)
-        self.exportCsv("_".join(meta.split(" ")), header, results)
+        self.exportCsv("_".join(meta.split(" ")), header, results, nameGraph)
         return results, header
 
     def pageRank_algo(self, nameGraph, relation, iterations, dampingFactor):
@@ -61,11 +61,11 @@ class CypherQueries:
         meta = f"PageRank idGraph {nameGraph} relation {relation} iterations {iterations} dampingFactor {dampingFactor}"
         #print(meta, results)
         logging.info(meta)
-        self.exportCsv("_".join(meta.split(" ")), header, results)
+        self.exportCsv("_".join(meta.split(" ")), header, results, nameGraph)
         return results, header
 
-    def exportCsv(self, name, header, data):
-        with open(name+'.csv', 'w') as csvfile:
+    def exportCsv(self, name, header, data, nameGraph):
+        with open(f"/results/{nameGraph}/{name}.csv", 'w') as csvfile:
             filewriter = csv.writer(
                 csvfile, delimiter=',', lineterminator='\r\n')
             filewriter.writerow(header)
