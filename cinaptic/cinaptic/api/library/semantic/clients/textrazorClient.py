@@ -1,5 +1,6 @@
 import textrazor
-from .consts import *
+from consts import *
+import json
 class TextRazorClient:
 
     def get_entities_from_url(self, url):
@@ -16,8 +17,17 @@ class TextRazorClient:
         try:
             textrazor.api_key = TEXT_RAZOR_API_KEY_1
             client = textrazor.TextRazor(extractors=[ENTITES, RELATIONS, TOPICS])
+            # client.set_classifiers(["textrazor_mediatopics"])
             response = client.analyze(text)
             return response
         except Exception as e:
             print(str(e))
             raise Exception(str(e))
+
+
+# textrazorc = TextRazorClient()
+# response = textrazorc.get_entities_from_text("water quality satellite monitoring algae image processing")
+
+# for entity in response.entities():
+# # print(list(response.matching_rules()))
+#     print("Entity ID : "+str(entity.id), " - RelevanceScore : "+str(entity.relevance_score), " - ConfidenceScore : "+str(entity.confidence_score))

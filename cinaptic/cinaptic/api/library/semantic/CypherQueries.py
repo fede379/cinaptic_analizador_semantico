@@ -3,6 +3,8 @@ from neomodel import db
 import csv
 import logging
 
+logger = logging.getLogger()
+
 class CypherQueries:
     def closeness_algo(self, nameGraph, relation, improved):
         query = f'''CALL algo.closeness.stream('MATCH (e:Entidad) WHERE e.idGraph=\"{nameGraph}\" RETURN id(e) as id',
@@ -15,9 +17,9 @@ class CypherQueries:
         results, header = db.cypher_query(query)
         meta = f"Closeness idGraph {nameGraph} relation {relation} improved {improved}"
         #print(meta, results)
-        logging.info(meta)
-        self.exportCsv("_".join(meta.split(" ")), header, results)
-        return results, header
+        path = self.exportCsv("_".join(meta.split(" ")), header, results, nameGraph)
+        logger.info(meta + " saved in " + path)
+        return path
 
     def closeness_harmonic_algo(self, nameGraph, relation):
         query = f'''CALL algo.closeness.harmonic.stream('MATCH (e:Entidad) WHERE e.idGraph=\"{nameGraph}\" RETURN id(e) as id',
@@ -30,9 +32,9 @@ class CypherQueries:
         results, header = db.cypher_query(query)
         meta = f"Harmonic Closeness idGraph {nameGraph} relation {relation}"
         #print(meta, results)
-        logging.info(meta)
-        self.exportCsv("_".join(meta.split(" ")), header, results)
-        return results, header
+        path = self.exportCsv("_".join(meta.split(" ")), header, results, nameGraph)
+        logger.info(meta + " saved in " + path)
+        return path
 
     def betweenness_algo(self, nameGraph, relation):
         query = f'''CALL algo.betweenness.stream('MATCH (e:Entidad) WHERE e.idGraph=\"{nameGraph}\" RETURN id(e) as id',
@@ -45,9 +47,9 @@ class CypherQueries:
         results, header = db.cypher_query(query)
         meta = f"Betweenness idGraph {nameGraph} relation {relation}"
         #print(meta, results)
-        logging.info(meta)
-        self.exportCsv("_".join(meta.split(" ")), header, results)
-        return results, header
+        logger.info(meta)
+        path = self.exportCsv("_".join(meta.split(" ")), header, results, nameGraph)
+        return path
 
     def pageRank_algo(self, nameGraph, relation, iterations, dampingFactor):
         query = f'''CALL algo.pageRank.stream('MATCH (e:Entidad) WHERE e.idGraph=\"{nameGraph}\" RETURN id(e) as id',
@@ -60,14 +62,16 @@ class CypherQueries:
         results, header = db.cypher_query(query)
         meta = f"PageRank idGraph {nameGraph} relation {relation} iterations {iterations} dampingFactor {dampingFactor}"
         #print(meta, results)
-        logging.info(meta)
-        self.exportCsv("_".join(meta.split(" ")), header, results)
-        return results, header
+        path = self.exportCsv("_".join(meta.split(" ")), header, results, nameGraph)
+        logger.info(meta + " saved in " + path)
+        return path
 
-    def exportCsv(self, name, header, data):
-        with open(name+'.csv', 'w') as csvfile:
+    def exportCsv(self, name, header, data, nameGraph):
+        path = f"results/{nameGraph}/{name}.csv"
+        with open(path, 'w') as csvfile:
             filewriter = csv.writer(
                 csvfile, delimiter=',', lineterminator='\r\n')
             filewriter.writerow(header)
             filewriter.writerows(data)
         csvfile.close()
+        return path

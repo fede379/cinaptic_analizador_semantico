@@ -5,9 +5,11 @@ from .CypherQueries import CypherQueries
 from .clients.DBPedia import * 
 from .repository.Neo4J import *
 from neomodel import db
+from .utils.Email import EmailSender
 import logging
 client = DBPedia()
 cypherQueries = CypherQueries()
+emailService = EmailSender()
 SUBJECT = 'subject'
 BROADER = 'broader'
 SINONYM = 'sinonym'
@@ -57,12 +59,14 @@ class GraphBuilder:
         #Store in Neo4J each triple
 
     def process_results(self, key=''):
+        files = []
         for rel in RELATIONS:
-            cypherQueries.closeness_algo(key, rel, False)
-            cypherQueries.closeness_harmonic_algo(key, rel)
-            cypherQueries.closeness_algo(key, rel, True)
-            cypherQueries.betweenness_algo(key, rel)
-            cypherQueries.pageRank_algo(key, rel, 20, 0.85)
+            files.append(cypherQueries.closeness_algo(key, rel, False))
+            files.append(cypherQueries.closeness_harmonic_algo(key, rel))
+            files.append(cypherQueries.closeness_algo(key, rel, True))
+            files.append(cypherQueries.betweenness_algo(key, rel))
+            files.append(cypherQueries.pageRank_algo(key, rel, 20, 0.85))
+        emailService.sendMailToAll(info=f"Proceso terminado. Resultados del grafo {key}:", filesToSend=files, error=False)
             
     def process_massive_save_by_key(self, triples_by_key, nameGraph):
         for triple in triples_by_key:
@@ -95,6 +99,7 @@ class GraphBuilder:
             except Exception as e:
                 print(e)
                 logger.error(e)
+                emailService.sendMailToAdmin(e)
                 pass
 
 
