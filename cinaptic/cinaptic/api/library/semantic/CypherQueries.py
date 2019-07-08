@@ -2,6 +2,7 @@ from .repository.Neo4J import *
 from neomodel import db
 import csv
 import logging
+import os
 
 logger = logging.getLogger()
 
@@ -67,6 +68,7 @@ class CypherQueries:
         return path
 
     def exportCsv(self, name, header, data, nameGraph):
+        os.mkdir(f"results/{nameGraph}")
         path = f"results/{nameGraph}/{name}.csv"
         with open(path, 'w') as csvfile:
             filewriter = csv.writer(
