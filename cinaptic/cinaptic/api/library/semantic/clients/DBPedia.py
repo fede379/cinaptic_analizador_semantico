@@ -1,9 +1,11 @@
+from ..utils.Email import EmailSender
 from SPARQLWrapper import SPARQLWrapper, JSON
 from .consts import DBPEDIA_SPARKQL_ENDPOINT, \
     RESULTS, BINDINGS, VALUE, ARISTS_VALUE, NAME, \
     RELATION, SLASH_RESOURCE, TWO_POINTS
 import time
 import logging
+emailService = EmailSender()
 IS_BROADER_OF = "is_broader_of"
 BROADER = "broader"
 
@@ -60,12 +62,14 @@ class DBPedia:
                     relations.append((e1, rel, e2))
         except e:
             logger.error(e)
+            emailService.sendMailToAdmin(e)
             pass
         try:
             print("{0} Entidades encontradas para: {1}".format(len(relations), entity))
             logger.info("{0} Entidades encontradas para: {1}".format(len(relations), entity))
         except e:
             logger.error(e)
+            emailService.sendMailToAdmin(e)
             pass
         return relations, level_entities
 
