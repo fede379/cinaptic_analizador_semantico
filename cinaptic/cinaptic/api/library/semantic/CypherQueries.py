@@ -68,8 +68,10 @@ class CypherQueries:
         return path
 
     def exportCsv(self, name, header, data, nameGraph):
-        os.mkdir(f"results/{nameGraph}")
-        path = f"results/{nameGraph}/{name}.csv"
+        path = f"results/{nameGraph}"
+        if not os.path.exists(path):
+            os.mkdir(path)
+        path = f"{path}/{name}.csv"
         with open(path, 'w') as csvfile:
             filewriter = csv.writer(
                 csvfile, delimiter=',', lineterminator='\r\n')
