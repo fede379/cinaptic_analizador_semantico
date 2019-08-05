@@ -13,7 +13,7 @@ import logging
 
 logger = logging.getLogger()
 
-USER = "cinapticserver@gmail.com"
+USER = "cinaptic.server@frre.utn.edu.ar"
 PASS = "c1n4pt1c"
 EMAIL_LIST = ["fedeloe379@gmail.com", "federico.loebarth@gmail.com"]
 # EMAIL_LIST = ["fedeloe379@gmail.com", "mkaranik@gmail.com", "mminoli@gmail.com", "laura.aguilar90@gmail.com"]
@@ -46,7 +46,7 @@ class EmailSender:
                     pass
 
         try:
-            with smtplib.SMTP('smtp.gmail.com', 587) as s:
+            with smtplib.SMTP('mail.frre.utn.edu.ar', 587) as s:
                 s.ehlo()
                 s.starttls()
                 s.ehlo()
