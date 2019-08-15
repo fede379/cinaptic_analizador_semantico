@@ -27,8 +27,10 @@ class GraphBuilder:
         start = time.time()
         print("START")
         logger.info("Start!")
-        self.process_keys_found(key=configurations["entity"], depth=configurations["depth"])
-        self.process_results(key=configurations["entity"])
+        if not configurations['onlyresults']:
+            self.process_keys_found(key=configurations["entity"], depth=configurations["depth"])
+        if configurations['onlyresults']:
+            self.process_results(key=configurations["entity"], noemail=configurations["noemail"])
         end = time.time()
         print("Time elapsed: {0}".format(end-start))
         logger.info("Time elapsed: {0} ms".format(end-start))
@@ -58,7 +60,7 @@ class GraphBuilder:
         triples_by_key = self.gen_graph_for_neo(key, depth)
         #Store in Neo4J each triple
 
-    def process_results(self, key=''):
+    def process_results(self, key='', noemail=False):
         files = []
         for rel in RELATIONS:
             files.append(cypherQueries.closeness_algo(key, rel, False))
@@ -66,7 +68,10 @@ class GraphBuilder:
             files.append(cypherQueries.closeness_algo(key, rel, True))
             files.append(cypherQueries.betweenness_algo(key, rel))
             files.append(cypherQueries.pageRank_algo(key, rel, 20, 0.85))
-        emailService.sendMailToAll(info=f"Proceso terminado. Resultados del grafo {key}:", filesToSend=files, error=False)
+            files.append(cypherQueries.degree_algo(key, rel, "incoming"))
+            files.append(cypherQueries.degree_algo(key, rel, "outcoming"))
+        if not noemail:
+            emailService.sendMailToAll(info=f"Proceso terminado. Resultados del grafo {key}:", filesToSend=files, error=False)
             
     def process_massive_save_by_key(self, triples_by_key, nameGraph):
         for triple in triples_by_key:
