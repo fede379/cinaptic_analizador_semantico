@@ -1,6 +1,7 @@
 from operator import methodcaller
 import re
 import os
+import argparse
 
 def concat_arrays(arrays):
     result = []

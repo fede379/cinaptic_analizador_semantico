@@ -15,8 +15,8 @@ logger = logging.getLogger()
 
 USER = "cinaptic.server@frre.utn.edu.ar"
 PASS = "c1n4pt1c"
-EMAIL_LIST = ["fedeloe379@gmail.com", "federico.loebarth@gmail.com"]
-# EMAIL_LIST = ["fedeloe379@gmail.com", "mkaranik@gmail.com", "mminoli@gmail.com", "laura.aguilar90@gmail.com"]
+#EMAIL_LIST = ["fedeloe379@gmail.com", "federico.loebarth@gmail.com"]
+EMAIL_LIST = ["fedeloe379@gmail.com", "mkaranik@gmail.com", "mminoli@gmail.com", "laura.aguilar90@gmail.com"]
 
 class EmailSender:
     def sendMail(self, emailFrom, emailTo, info = '', filesToSend = [], error = False):
