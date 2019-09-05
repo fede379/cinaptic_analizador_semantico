@@ -1,0 +1,9 @@
+SELECT * WHERE {
+    {SELECT * WHERE {
+    dbr:Water_quality ?outcoming ?value. FILTER( STRSTARTS(STR(?value),str(dbc:)) || STRSTARTS(STR(?value),str(dbr:)) || STRSTARTS(STR(?value),str(owl:)) || STRSTARTS(STR(?value),str(dbo:)) )    
+}} UNION {
+        SELECT * WHERE {
+            ?value ?incoming dbr:Water_quality. FILTER( STRSTARTS(STR(?value),str(dbc:)) || STRSTARTS(STR(?value),str(dbr:)) || STRSTARTS(STR(?value),str(owl:)) || STRSTARTS(STR(?value),str(dbo:)) )
+        }
+    }
+}
