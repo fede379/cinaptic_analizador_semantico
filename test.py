@@ -1,8 +1,9 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 import logging
 import json
-from .cinaptic.cinaptic.api.library.semantic.repository.Neo4J import *
+from cinaptic.cinaptic.api.library.semantic.repository.Neo4J import *
 from neomodel import db
+from pypher import Pypher, __
 
 # import time
 
@@ -17,6 +18,7 @@ SLASH_RESOURCE = "/resource/"
 CATEGORY_RESOURCE = "/Category:"
 DBPEDIA_SPARKQL_ENDPOINT = "http://dbpedia.org/sparql"
 logger = logging.getLogger()
+p = Pypher()
 
 
 class DBPedia:
@@ -33,6 +35,7 @@ class DBPedia:
             results = sparql.query().convert()
             entities = results["results"]["bindings"]
             relations = list(map(lambda x: self.parseEntities(x), entities))
+            self.persistData(idGraph=f"{entity}-allrelations", mainEntity=entity, relations=relations)
             # json file
             exDict = {'results': entities}
             with open('dbpedia-query.json', 'w') as file:
@@ -40,19 +43,11 @@ class DBPedia:
             exDict = {'relations': relations}
             with open('relations.json', 'w') as file:
                 file.write(json.dumps(exDict))
-            # print(relations)
-            # print(len(relations))
+            incoming_relations = list(filter(lambda x: x['direction'] == 'incoming', relations))
+            outcoming_relations = list(filter(lambda x: x['direction'] == 'outcoming', relations))
         except Exception as e:
             logger.error(e)
-            pass
-        try:
-            print(
-                f"{len(incoming_relations)} Relaciones entrantes encontradas para: {entity}")
-            print(
-                f"{len(outcoming_relations)} Relaciones salientes encontradas para: {entity}")
-        except Exception as e:
-            logger.error(e)
-            pass
+            pass        
         return incoming_relations, outcoming_relations
 
     def buildQuery(self, resource_entity):
@@ -88,7 +83,6 @@ class DBPedia:
 
     def parseNode(self, url):
         node = ''
-
         if '#' in url:
             node = url[url.rfind('#') + 1:]
         else:
@@ -100,28 +94,45 @@ class DBPedia:
                     index = url.rfind('/')
                     node = url[index + 1:]
         return node
+    
+    def persistData(self, idGraph, mainEntity, relations):
+        try:
+            p.MERGE.node('e1', 'Entidad', name=mainEntity, idGraph=idGraph)
+            db.cypher_query(str(p), params=p.bound_params)
+            list(map(lambda x: self.saveTriple(mainEntity, x, idGraph), relations))
+        except Exception as e:
+            print(e)
+            pass
 
-    def saveTriples(self, mainEntity, relations)
-        
+    def saveTriple(self, mainEntity, triple, idGraph):
+        try:
+            p.reset()
+            if triple['node'] != mainEntity:
+                if triple['direction'] == 'outcoming':                
+                    p.MATCH.node('e1', 'Entidad', name=mainEntity, idGraph=idGraph).MERGE.node('e1').rel_out(labels=str(triple['relation']).upper()).node('e2', 'Entidad', name=triple['node'], idGraph=idGraph)
+                if triple['direction'] == 'incoming':
+                    p.MATCH.node('e1', 'Entidad', name=mainEntity, idGraph=idGraph).MERGE.node('e2', 'Entidad', name=triple['node'], idGraph=idGraph).rel_out(labels=str(triple['relation']).upper()).node('e1')
+            else:
+                p.MATCH.node('e1', 'Entidad', name=mainEntity, idGraph=idGraph).MERGE.node('e1').rel_out(labels=str(triple['relation']).upper()).node('e1')
+            db.cypher_query(str(p), params=p.bound_params)
+            return str(p)
+        except Exception as e:
+            print(e)
+            pass
 
 
 dbpedia = DBPedia()
-incomings, outcomings = dbpedia.execute('Water')
+incomings, outcomings = dbpedia.execute('Water_quality')
+print(f"{len(incomings)} entrantes")
+print(f"{len(outcomings)} salientes")
 
-
-
-# url = "http://dbpedia.org/resource/Category:Liquids"
-# url = "http://dbpedia.org/resource/Constituent"
-# url = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-# if '#' in url:
-#     node = url[url.rfind('#') + 1:]
-# else:    
-#     if CATEGORY_RESOURCE in url:
-#         index = url.rfind(':')
-#         node = url[index + 1:]
-#     else:
-#         if '/' in url:
-#             index = url.rfind('/')
-#             node = url[index + 1:]
+# mainEntity = 'Water'
+# idGraph = 'test'
+# relation = 'TEST'
+# node = 'Test'
+# p.MATCH.node('e1', 'Entidad', name=mainEntity, idGraph=idGraph).MERGE.node('e1').rel_out(labels=relation).node('e2', 'Entidad', name=node, idGraph=idGraph)
+# p.MERGE.node(mainEntity, 'Entidad', name=mainEntity, idGraph=idGraph).rel_out(labels='RELACION').node('entity2', 'Entidad', name='Test', idGraph=idGraph)
+# aux = db.cypher_query(str(p), params=p.bound_params)
+# print(aux)
 
 # print(node)

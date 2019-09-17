@@ -6,3 +6,4 @@ env
 *.xlsx
 *.log
 *.csv
+*.json
