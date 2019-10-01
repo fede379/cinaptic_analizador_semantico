@@ -8,10 +8,13 @@ from operator import itemgetter
 DBPEDIA_SPARKQL_ENDPOINT = "http://dbpedia.org/sparql"
 WIKIPEDIA_URLBASE = "http://en.wikipedia.org/wiki/"
 textrazorclient = TextRazorClient()
-SEEN = set()
 
 class EntityExtraction:
-    def getListEntitiesFromWiki(self, entity = None):
+    def __init__(self):
+        self.seen = set()
+        print('init')
+
+    def getListEntitiesFromWiki(self, entity = None, top = None):
         # urls = self.getWikipediaUrls(entity)
         # listEntitiesFromWiki = list(map(lambda x: self.getTextRazorResponse(x), urls))
         entitiesFromWiki = []
@@ -21,15 +24,16 @@ class EntityExtraction:
             entidadesWiki = list(map(lambda x: self.parseTupleToDict(x), entitiesFromWiki))
             sortedListEntities = sorted(entidadesWiki, key=itemgetter('relevance'), reverse=True)
             # only for duplicate filter purposes
-            SEEN = set()
+            self.seen = set()
+            # only for duplicate filter purposes
             withoutDuplicates = list(filter(lambda x: self.avoidDuplicate(x), sortedListEntities))
-            result = list(filter(lambda x: x["relevance"] > 0, withoutDuplicates))
-        return result[:10]
+            withoutRelevanceZero = list(filter(lambda x: x["relevance"] > 0, withoutDuplicates))
+        return withoutRelevanceZero[:top] if top is not None else withoutRelevanceZero
         
     def avoidDuplicate(self, eldict):
-        if eldict['id'] in SEEN:
+        if eldict['id'] in self.seen:
             return False
-        SEEN.add(eldict['id'])
+        self.seen.add(eldict['id'])
         return True
 
     # def getWikipediaUrls(self, entity):
@@ -65,7 +69,7 @@ class EntityExtraction:
         responseDict = ()
         if textRazorResponse is not None:
             responseDict = (
-                textRazorResponse.id,                
+                textRazorResponse.id,
                 textRazorResponse.confidence_score,
                 textRazorResponse.relevance_score,
                 textRazorResponse.wikipedia_link,
@@ -79,23 +83,33 @@ class EntityExtraction:
         responseDict = {}
         if tupla is not None:
             responseDict = {
-                "id": tupla[0],                
+                "id": tupla[0],
                 "confidence": tupla[1],
                 "relevance": tupla[2],
                 "wikiurl": tupla[3]
             }
         return responseDict
+    
+    def directMatchingList(self, listEntity1 = [], listEntity2 = []):
+        idList = list(map(lambda x: x['id'], listEntity2))
+        return list(filter(lambda x: x['id'] in idList, listEntity1))
+
+    def calculateWeights(self, index, entityDict, listLength):
+        entityDict['weight'] = (1 / (index + 1))
+        return entityDict
 
 enex = EntityExtraction()
-entity = 'Water_quality'
-result = enex.getListEntitiesFromWiki(entity)
-eljson = {'results': result}
+entity1 = 'Water_quality'
+listEntity1 = enex.getListEntitiesFromWiki(entity1, 50)
+entity2 = 'Water'
+listEntity2 = enex.getListEntitiesFromWiki(entity2, 50)
+result = enex.directMatchingList(listEntity1, listEntity2)
+eljson = {
+    entity1: listEntity1,
+    entity2: listEntity2,
+    'results': result
+    }
 # print(eljson)
-print(len(result))
-with open(f'{entity}-textRazorEntity.json', 'w') as file:
+# print(len(result))
+with open(f'{entity1}-{entity2}-textRazorEntity.json', 'w') as file:
     file.write(json.dumps(eljson))
-
-# lista = [("hola", 12, 12.3, "mundo"), ("hola2", 13, 15.3, "mundo2")]
-# myfset = set(lista)
-
-# print(list(myfset))
