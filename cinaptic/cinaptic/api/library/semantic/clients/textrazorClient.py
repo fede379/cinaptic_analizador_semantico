@@ -7,6 +7,7 @@ class TextRazorClient:
         try:
             textrazor.api_key = TEXT_RAZOR_API_KEY_1
             client = textrazor.TextRazor(extractors=[ENTITIES, RELATIONS, TOPICS])
+            client.set_cleanup_mode("cleanHTML")
             response = client.analyze_url(url)
             return response
         except Exception as e:
@@ -17,7 +18,6 @@ class TextRazorClient:
         try:
             textrazor.api_key = TEXT_RAZOR_API_KEY_1
             client = textrazor.TextRazor(extractors=[ENTITIES, RELATIONS, TOPICS])
-            # client.set_classifiers(["textrazor_mediatopics"])
             response = client.analyze(text)
             return response
         except Exception as e:
