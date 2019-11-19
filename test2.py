@@ -12,7 +12,7 @@ WEIGHTS = [1.0, 0.5, 0.3333333333333333, 0.25, 0.2, 0.16666666666666666, 0.14285
 DBPEDIA_SPARKQL_ENDPOINT = "http://dbpedia.org/sparql"
 WIKIPEDIA_URLBASE = "http://en.wikipedia.org/wiki/"
 textrazorclient = TextRazorClient()
-
+p = Pypher()
 
 class EntityExtraction:
     def __init__(self):
@@ -20,11 +20,12 @@ class EntityExtraction:
         self.tuplesSeen = set()
         self.computed = set()
         self.remnants = set()
+        # self.top = 100
         self.top = 50
-        # self.topMatching = None
-        self.topMatching = 3
+        self.topMatching = None
+        # self.topMatching = 3
         self.levelLimit = 2
-        self.p = Pypher()
+        self.nameGraph = 'test'
 
     def getListEntitiesFromWiki(self, entity=None, top=None):
         entitiesFromWiki = []
@@ -158,6 +159,7 @@ class EntityExtraction:
             result = self.getDirectMatchingList(tupla[0], tupla[1],
                                                 listEntity1, listEntity2, topMatching)
             # aca se persistirian los datos en neo4j
+            [self.persistTriple(tupla, entity) for entity in result]
             print('+++++++++++++++++++++++++++++++++++++++++++++++')
             [print(f"{tupla[0]} --> {entity['id']} <-- {tupla[1]}")
              for entity in result]
@@ -202,6 +204,7 @@ class EntityExtraction:
         """
         if entityTuple[0] is not None and entityTuple[1] is not None:
             try:
+                self.nameGraph = f"""{entityTuple[0]}-{entityTuple[1]}"""
                 tuplesList = [self.getLexicographicTuple(
                     entityTuple[0], entityTuple[1])]
                 self.computeLevel(tuplesList, 1)
@@ -218,34 +221,51 @@ class EntityExtraction:
                 tupla = tuple([entity2, entity1])
         return tupla
 
-    # def persistTriple(self, tupla = (None, None), relationEntity = None):
-    #     if tupla[0] is not None and tupla[1] is not None and relationEntity is not None:
-    #         try:
-    #             self.p = self.p.reset()
-    #             if tupla[0] != relationEntity and tupla[1] != relationEntity:
-    #                 self.p.MERGE.node('e', 'Entidad', name='Water', relevance=0,7, idGraph='nombre_grafo')
-    #                 self.p.MERGE.node('e', 'Entidad', name='Water_quality', relevance=0,7, idGraph='nombre_grafo')
-    #                 self.p.MATCH.node('e1', 'Entidad', name='Water', idGraph= 'nombre_grafo').node('e2', 'Entidad', name='Water_quality', idGraph='nombre_grafo').CREATE.node(e1).rel_out(labels='RELATION').node(e2)
-    #             db.cypher_query(str(self.p), params=self.p.bound_params)
-    #         except Exception as e:
-    #             print(e)
-    #             pass
-
+    def persistTriple(self, tupla = (None, None), relationEntity = None, nameGraph = None):
+        if nameGraph is None:
+            nameGraph = self.nameGraph
+        if tupla[0] is not None and tupla[1] is not None and relationEntity is not None:
+            try:
+                p.reset()
+                if tupla[0] != relationEntity and tupla[1] != relationEntity:
+                    p.MERGE.node('a', 'Entidad', name=tupla[0], idGraph=nameGraph)
+                    self.saveData()
+                    p.MERGE.node('b', 'Entidad', name=tupla[1], idGraph=nameGraph)
+                    self.saveData()
+                    p.MERGE.node('c', 'Entidad', name=relationEntity['id'], idGraph=nameGraph)
+                    self.saveData()
+                    if tupla[0] != relationEntity['id']:
+                        p.MATCH.node('e1', 'Entidad', name=tupla[0], idGraph=nameGraph).MATCH.node('er', 'Entidad', name=relationEntity['id'], idGraph=nameGraph).CREATE.node('e1').rel_out(labels='RELATION', relevance=relationEntity['relevance'], idGraph=nameGraph).node('er')
+                        self.saveData()
+                    if tupla[1] != relationEntity['id']:
+                        p.MATCH.node('e2', 'Entidad', name=tupla[1], idGraph=nameGraph).MATCH.node('er', 'Entidad', name=relationEntity['id'], idGraph=nameGraph).CREATE.node('e2').rel_out(labels='RELATION', relevance=relationEntity['relevance'], idGraph=nameGraph).node('er')
+                        self.saveData()
+            except Exception as e:
+                print(e)
+                pass
+        
+    def saveData(self):
+        db.cypher_query(str(p), params=p.bound_params)
+        p.reset()
 
 enex = EntityExtraction()
-entity1 = 'Pug'
-entity2 = 'Golden retriever'
-# top = 50
-# topMatching = 3
-# result = enex.computeTuple((entity1, entity2), top)
-# print(len(result))
-# print(result)
-# tuplesList = [('Machine_learning', 'Data_mining'), ('Machine_learning', 'Mathematical_model')]
-enex.executeEntityTuple((entity1, entity2))
 
-# result = [enex.computeTuple(tupla) for tupla in tuplesList]
+entity1 = 'Risotto'
+entity2 = 'Paella'
+
+# 
+# top = 100
+# listEntity1 = enex.getListEntitiesFromWiki(entity1, top)
+# listEntity2 = enex.getListEntitiesFromWiki(entity2, top)
+# result = enex.getDirectMatchingList(entity1, entity2, listEntity1, listEntity2)
+# print(len(result))
 # eljson = {
-#     'results': list(itertools.chain.from_iterable(result))
+#     entity1: listEntity1,
+#     entity2: listEntity2,
+#     'results': result,
 #     }
 # with open(f'test.json', 'w') as file:
 #     file.write(json.dumps(eljson))
+# 
+
+enex.executeEntityTuple((entity1, entity2))
