@@ -2,7 +2,16 @@ self.p.MERGE.node('e', 'Entidad', name='Water', relevance=0,7, idGraph='nombre_g
 self.p.MERGE.node('e', 'Entidad', name='Water_quality', relevance=0,7, idGraph='nombre_grafo')   
 self.p.MATCH.node('e1', 'Entidad', name='Water', idGraph= 'nombre_grafo').node('e2', 'Entidad', name='Water_quality', idGraph='nombre_grafo').CREATE.node(e1).rel_out(labels='RELATION').node(e2)
 
+// calculate sum of relevances
+MATCH (n)<-[r:RELATION]-()
+WITH n, sum(r.relevance) AS weight
+SET n.weight = weight
 
+// order
+match (e1:Entidad) return e1.name, e1.weight order by e1.weight DESC
+p.Match.node('e1','Entidad').RETURN.(__.e1.__name__, __.e1.__weight__).OrderBy(.e1.__weight__).DESC
+
+// delete all
 MATCH (e)-[r]-() DELETE e,r
 
 // BETWEENESS ALGO

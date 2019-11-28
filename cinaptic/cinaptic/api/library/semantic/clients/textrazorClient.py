@@ -1,5 +1,5 @@
 import textrazor
-from .consts import *
+from .consts import TEXT_RAZOR_API_KEY_1, ENTITIES, RELATIONS, TOPICS
 import json
 class TextRazorClient:
 

@@ -17,7 +17,6 @@ class Config:
             parameters["noemail"] = bool(results['NOEMAIL'])
             parameters["onlyresults"] = bool(results['ONLYRESULTS'])
             return parameters
-            pass
         except Exception as e:
             logging.error(e)
             pass

@@ -1,6 +1,7 @@
 from operator import methodcaller
 import re
 import os
+import argparse
 
 def concat_arrays(arrays):
     result = []
@@ -29,6 +30,7 @@ def check_int(value):
                 "%s must be a positive integer" % value)
         return ivalue
     except ValueError as e:
+        print(e)
         raise argparse.ArgumentTypeError(
             "%s must be a positive integer" % value)
 
@@ -50,5 +52,6 @@ def check_path(value):
                 "%s must be a valid creatable path (check file permissions)" % value)
         return ivalue
     except ValueError as e:
+        print(e)
         raise argparse.ArgumentTypeError(
             "%s must be a valid creatable path (check file permissions)" % value)
