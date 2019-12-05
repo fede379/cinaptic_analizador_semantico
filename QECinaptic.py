@@ -4,10 +4,11 @@ import logging
 import logging.handlers
 import argparse
 from QueryExpansion import QueryExpansion
+from utils import cleanString
 
 # argparse
 parser = argparse.ArgumentParser(description="Cinaptic Query Expansion")
-parser.add_argument("sk", type=str, help="Search key for the query expansion")
+parser.add_argument("sk", type=cleanString, help="Search key for the query expansion")
 args = parser.parse_args()
 
 qe = QueryExpansion()

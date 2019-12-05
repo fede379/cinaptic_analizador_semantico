@@ -12,7 +12,7 @@ class TextRazorClient:
             return response
         except Exception as e:
             print("ERROR For URL: {0} - {1}".format(url, str(e)))
-            raise Exception()
+            raise Exception(e)
 
     def get_entities_from_text(self, text):
         try:
@@ -21,8 +21,8 @@ class TextRazorClient:
             response = client.analyze(text)
             return response
         except Exception as e:
-            print(str(e))
-            raise Exception(str(e))
+            print(e)
+            raise Exception(e)
 
 
 # textrazorc = TextRazorClient()

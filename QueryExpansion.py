@@ -11,6 +11,7 @@ class QueryExpansion():
             if len(entitiesTuples) > 0:
                 # aca hacer la magia
                 # [graphgen.executeEntityTuple(et) for et in entitiesTuples]
+                
                 print(entitiesTuples)
             return entitiesTuples
 
