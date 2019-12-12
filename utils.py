@@ -27,8 +27,9 @@ def lexicographicSort(unsortedList=[]):
     return result
 
 
-def loadPickle(path=None):
-    if path is not None:
+def loadPickle(nameGraph=None):
+    if nameGraph is not None:
+        path = f'graphs/{nameGraph}.pickle'
         try:
             with open(path, 'rb') as f:
                 return pickle.load(f)

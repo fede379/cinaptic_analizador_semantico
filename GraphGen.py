@@ -211,23 +211,28 @@ class GraphGen:
         """
         if entityTuple[0] is not None and entityTuple[1] is not None:
             try:
-                self.nameGraph = f"""{entityTuple[0]}-{entityTuple[1]}"""
-                if not self.isGraphFinished():
-                    if self.isGraphCreated():
-                        self.deleteGraph()
-                    tuplesList = [getLexicographicTuple(
-                        entityTuple[0], entityTuple[1])]
-                    self.computeLevel(tuplesList, 1)
-                    self.persistEntitiesWeights()
-                    results, headers = self.getOrderedEntitiesByWeight()
-                    data = { 'results': results, 'headers': headers }
-                    self.saveResults(data)
-                else:
+                lexTuple = getLexicographicTuple(entityTuple[0], entityTuple[1])
+                self.nameGraph = f"""{lexTuple[0]}-{lexTuple[1]}"""
+                if self.isGraphFinished(self.nameGraph):
+                    print(f'grafo: {self.nameGraph} ya generado')
                     res = self.loadResults()
                     results, headers = res['results'], res['headers']
+                else:
+                    if self.isGraphCreated(self.nameGraph):
+                        self.deleteGraph()
+                    tuplesList = [lexTuple]
+                    print(f'generando grafo: {self.nameGraph}')
+                    self.computeLevel(tuplesList, 1)
+                    self.persistEntitiesWeights(self.nameGraph, lexTuple)
+                    if self.isGraphCreated(self.nameGraph):
+                        results, headers = self.getOrderedEntitiesByWeight()
+                    else:
+                        results, headers = [], ()
+                    data = { 'results': results, 'headers': headers }
+                    self.saveResults(data)
                 return results, headers
-            except Exception as e:                
-                print(e)        
+            except Exception as e:
+                print(e)
         return [], ()
 
     def persistTriple(self, tupla = (None, None), relationEntity = None, nameGraph = None):
@@ -253,11 +258,17 @@ class GraphGen:
                 print(e)
                 pass
 
-    def persistEntitiesWeights(self, nameGraph = None):
+    def persistEntitiesWeights(self, nameGraph = None, tupla = (None, None)):
         if nameGraph is None:
             nameGraph = self.nameGraph
         try:
             p.reset()
+            p.MATCH.node('e1', 'Entidad', idGraph=nameGraph, name=tupla[0])
+            p.SET(__.e1.__weight__ == 0)
+            self.executeQuery()
+            p.MATCH.node('e1', 'Entidad', idGraph=nameGraph, name=tupla[1])
+            p.SET(__.e1.__weight__ == 0)
+            self.executeQuery()
             p.MATCH.node('e1', 'Entidad', idGraph=nameGraph).rel_in('r').node(idGraph=nameGraph)
             p.WITH('e1', __.SUM(__.r.Property('relevance')).alias('weight'))
             p.SET(__.e1.__weight__ == __.weight)
@@ -309,9 +320,8 @@ class GraphGen:
     def loadResults(self, nameGraph = None):
         if nameGraph is None:
             nameGraph = self.nameGraph
-        if nameGraph is not None:
-            path = f'graphs/{nameGraph}.pickle'
-            return loadPickle(path)
+        else:
+            return loadPickle(nameGraph)
         return {}
 
     def deleteGraph(self, nameGraph = None):
@@ -328,10 +338,10 @@ class GraphGen:
         
         
 
-enex = GraphGen()
+# enex = GraphGen()
 
-entity1 = 'Risotto'
-entity2 = 'Paella'
+# entity1 = 'Biryani'
+# entity2 = 'Pilaf'
 
 # 
 # top = 100
@@ -348,6 +358,8 @@ entity2 = 'Paella'
 #     file.write(json.dumps(eljson))
 # 
 
-enex.executeEntityTuple((entity1, entity2))
+# enex.executeEntityTuple((entity1, entity2))
 
-# print(enex.isGraphFinished('Risotto-Paella'))
+# print(enex.isGraphFinished('Rice-Risotto'))
+
+# print(loadPickle('Rice-Risotto'))
