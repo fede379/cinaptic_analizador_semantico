@@ -16,7 +16,9 @@ class QueryExpansion():
                 print(entitiesTuples)
                 [graphgen.executeEntityTuple(et) for et in entitiesTuples]
                 results = self.getResults(entitiesTuples)
-                print(results)
+                # print(results)
+                print("Entity, Weight")
+                [print(f"{x[0]}, {x[1]}") for x in results['results']]
                 return results
             else:
                 print("No se encontraron entidades en la sk...")
